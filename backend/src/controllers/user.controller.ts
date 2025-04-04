@@ -10,7 +10,3 @@ export const createUser = async (ws: WebSocket, payload: any) => {
     const user = await User.create(payload);
     ws.send(JSON.stringify({ type: 'userCreated', data: user }));
 };
-
-export const ping = (ws: WebSocket) => {
-    ws.send(JSON.stringify({ type: 'pong' }));
-};
