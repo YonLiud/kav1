@@ -1,23 +1,24 @@
 import { WebSocket } from 'ws';
 import * as userController from '../controllers/user.controller';
 
-export const handleMessage = async (ws: WebSocket, message: string) => {
-    try {
-        const data = JSON.parse(message);
+type MessageHandler = (ws: WebSocket, payload?: any) => void | Promise<void>;
 
-        switch (data.type) {
-        case 'getUsers':
-            await userController.getUsers(ws);
-            break;
-        case 'createUser':
-            await userController.createUser(ws, data.payload);
-            break;
-        case 'ping':
-            userController.ping(ws);
-            break;
-        default:
-            ws.send(JSON.stringify({ type: 'error', message: 'Unknown command' }));
+const routes: Record<string, MessageHandler> = {
+  getUsers: userController.getUsers,
+  createUser: userController.createUser,
+  ping: userController.ping,
+};
+
+export const handleMessage = async (ws: WebSocket, message: string) => {
+  try {
+    const { type, payload } = JSON.parse(message);
+
+    const handler = routes[type];
+    if (!handler) {
+      return ws.send(JSON.stringify({ type: 'error', message: 'Unknown command' }));
     }
+
+    await handler(ws, payload);
   } catch (err) {
     ws.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));
   }
