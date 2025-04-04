@@ -4,3 +4,4 @@ venv
 
 # JavaScript
 node_modules
+package-lock.json
