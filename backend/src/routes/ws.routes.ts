@@ -1,12 +1,13 @@
 import { WebSocket } from 'ws';
 import * as userController from '../controllers/user.controller';
+import * as systemController from '../controllers/system.controller'
 
 type MessageHandler = (ws: WebSocket, payload?: any) => void | Promise<void>;
 
 const routes: Record<string, MessageHandler> = {
   getUsers: userController.getUsers,
   createUser: userController.createUser,
-  ping: userController.ping,
+  ping: systemController.ping,
 };
 
 export const handleMessage = async (ws: WebSocket, message: string) => {
