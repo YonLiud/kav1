@@ -1,6 +1,6 @@
 // src/controllers/UserController.ts
 import { BaseController } from './base.controller';
-import * as userHelper from '../helpers/user.helpers';
+import * as userHelper from '../helpers/user.helper';
 
 export class UserController extends BaseController {
   public async getUsers() {
