@@ -1,17 +1,14 @@
 from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout, QFormLayout, QMessageBox
 from PySide6.QtCore import Qt
 
-class ConnectionDialog(QDialog):
+class ServerChangeDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Connect")
+        self.setWindowTitle("Select Server")
         self.setFixedSize(200, 100)
 
         layout = QFormLayout()
-
-        label = QLabel("ENTER SERVER URL")
-        layout.addRow(label)
 
         self.url_input = QLineEdit()
         self.url_input.setPlaceholderText("ws://127.0.0.1:3000")
