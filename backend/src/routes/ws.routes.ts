@@ -1,19 +1,19 @@
 import { WebSocket } from 'ws';
-import { UserController } from '../controllers/user.controller';
+import { VisitorController } from '../controllers/visitor.controller';
 import * as systemController from '../controllers/system.controller';
-import { getUserById } from '../helpers/user.helper';
+import { getVisitorById } from '../helpers/visitor.helper';
 
-const userController = new UserController();
+const visitorController = new VisitorController();
 
 type MessageHandler = (ws: WebSocket, payload?: any) => Promise<any>;
 
 const routes: Record<string, MessageHandler> = {
-  getUsers: userController.getUsers.bind(userController),
-  getUsersInside: userController.getUsersInside.bind(userController),
-  getUserById: userController.getUserById.bind(userController),
-  getUsersByName: userController.getUsersByName.bind(userController),
-  createUser: userController.createUser.bind(userController),
-  updateUserInside: userController.updateUserInside.bind(userController),
+  getVisitors: visitorController.getVisitors.bind(visitorController),
+  getVisitorsInside: visitorController.getVisitorsInside.bind(visitorController),
+  getVisitorById: visitorController.getVisitorById.bind(visitorController),
+  getVisitorsByName: visitorController.getVisitorsByName.bind(visitorController),
+  createVisitor: visitorController.createVisitor.bind(visitorController),
+  updateVisitorInside: visitorController.updateVisitorInside.bind(visitorController),
   ping: systemController.ping,
 };
 

@@ -1,13 +1,13 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
 
-class User extends Model {
+class Visitor extends Model {
   declare id: number;
   declare name: string;
   declare inside: boolean;
 }
 
-User.init({
+Visitor.init({
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -17,6 +17,6 @@ User.init({
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   }
-}, { sequelize, modelName: 'user' });
+}, { sequelize, modelName: 'visitor' });
 
-export default User;
+export default Visitor;
