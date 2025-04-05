@@ -102,3 +102,16 @@ class WebSocketClient(QObject):
             self.error_occurred.emit(f"Request error: {str(e)}")
             await self.disconnect()
             return None
+    async def disconnect(self):
+        """Disconnect from WebSocket server"""
+        try:
+            if self.websocket:
+                await self.websocket.close()
+                self.websocket = None
+                self.connected_url = None
+                self.disconnected.emit()
+        except Exception as e:
+            self.error_occurred.emit(f"Disconnection error: {str(e)}")
+        finally:
+            self.websocket = None
+            self.connected_url = None
