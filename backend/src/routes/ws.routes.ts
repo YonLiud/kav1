@@ -1,7 +1,7 @@
 import { WebSocket } from 'ws';
 import { UserController } from '../controllers/user.controller';
 import * as systemController from '../controllers/system.controller';
-import { getUserById } from '../helpers/user.helpers';
+import { getUserById } from '../helpers/user.helper';
 
 const userController = new UserController();  // Instantiate the controller
 
