@@ -1,7 +1,6 @@
 import { WebSocket } from 'ws';
 import { VisitorController } from '../controllers/visitor.controller';
 import * as systemController from '../controllers/system.controller';
-import { getVisitorById } from '../helpers/visitor.helper';
 
 const visitorController = new VisitorController();
 
