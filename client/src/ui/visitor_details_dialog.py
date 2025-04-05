@@ -30,7 +30,6 @@ class VisitorDetailsDialog(QDialog):
         layout.addLayout(form)
 
         toggle_btn = QPushButton("Check Out" if visitor_data.get("inside") else "Check In")
-        toggle_btn.setEnabled(visitor_data.get("inside"))
         toggle_btn.clicked.connect(self.toggle_visitor_status)
         layout.addWidget(toggle_btn)
 
