@@ -17,3 +17,13 @@ export const broadcast = (msg: object) => {
         }
     });
 };
+
+export const sendSyncBroadcast = (target: string, message: string) => {
+    setImmediate(() => {
+      broadcast({
+        type: 'sync',
+        target: target,
+        message: message,
+      });
+    });
+  };

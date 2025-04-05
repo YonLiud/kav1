@@ -3,7 +3,7 @@ import { UserController } from '../controllers/user.controller';
 import * as systemController from '../controllers/system.controller';
 import { getUserById } from '../helpers/user.helper';
 
-const userController = new UserController();  // Instantiate the controller
+const userController = new UserController();
 
 type MessageHandler = (ws: WebSocket, payload?: any) => Promise<any>;
 

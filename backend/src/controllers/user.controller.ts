@@ -1,6 +1,7 @@
 // src/controllers/UserController.ts
 import { BaseController } from './base.controller';
 import * as userHelper from '../helpers/user.helper';
+import { sendSyncBroadcast } from '../helpers/ws.helper';
 
 export class UserController extends BaseController {
   public async getUsers() {
@@ -48,6 +49,7 @@ export class UserController extends BaseController {
       const user = await userHelper.getUserById(id);
       user.inside = inside;
       await user.save();
+      sendSyncBroadcast('getUsersInside', 'User updated, syncing users...');
       return this.sendSuccess('USER_UPDATED', 'User inside updated successfully', user);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
