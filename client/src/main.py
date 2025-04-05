@@ -9,7 +9,7 @@ def main():
     app.setOrganizationName("yxnliu")
     app.setOrganizationDomain("yxnliu.net")
 
-    app.setStyleSheet(stylesheet)
+    app.setStyle("WindowsVista")
 
     window = MainWindow()
     window.show()
