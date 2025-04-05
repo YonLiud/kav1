@@ -14,6 +14,7 @@ const routes: Record<string, MessageHandler> = {
   createVisitor: visitorController.createVisitor.bind(visitorController),
   updateVisitorInside: visitorController.updateVisitorInside.bind(visitorController),
   ping: systemController.ping,
+  fakesync: systemController.fakesync,
 };
 
 export const handleMessage = async (ws: WebSocket, message: string) => {

@@ -37,22 +37,25 @@ class WebSocketClient(QObject):
             async for message in self.websocket:
                 try:
                     data = json.loads(message)
-                    print("Received message:", data)  # Debug
+                    print("Received message:", data)
+
+                    # Handle sync messages separately
+                    if data.get('type') == 'sync' and data.get('target') == 'getVisitorsInside':
+                        print("Sync message received")
+                        # Don't wait for response, just request new data
+                        asyncio.create_task(self.get_visitors_inside())
+                        continue
                     
                     # Handle visitor data responses
-                    if data.get('type') == 'visitorsInside' or data.get('status') == 'success':
-                        visitors = data.get('payload', data.get('data', []))
+                    if data.get('status') == 'OK' and data.get('code') == 'VISITORS_RETRIEVED':
+                        visitors = data.get('data', [])
                         if isinstance(visitors, list):
                             self.visitors_updated.emit(visitors)
-                    
-                    # Handle sync messages
-                    elif data.get('type') == 'sync' and data.get('target') == 'getVisitorsInside':
-                        await self.get_visitors_inside()
                     
                     # Store the last response for request-response cycle
                     self._last_response = data
                     self._response_event.set()
-                    
+
                 except json.JSONDecodeError:
                     self.error_occurred.emit("Invalid JSON received")
         except Exception as e:
@@ -72,18 +75,27 @@ class WebSocketClient(QObject):
             self._last_response = None
             
             # Send request
-            await self.websocket.send(json.dumps({
+            request_data = json.dumps({
                 'type': 'getVisitorsInside'
-            }))
+            })
+            print("Sending request for visitors data:", request_data)  # Debug
+
+            await self.websocket.send(request_data)
             print("Sent getVisitorsInside request")  # Debug
 
-            # Wait for response with timeout
+            # Wait for the response with a timeout of 10 seconds
             try:
-                await asyncio.wait_for(self._response_event.wait(), timeout=5.0)
+                # The wait will now time out if the response isn't received within 10 seconds
+                await asyncio.wait_for(self._response_event.wait(), timeout=10.0)
                 if self._last_response and isinstance(self._last_response.get('data'), list):
                     return self._last_response['data']
+                else:
+                    self.error_occurred.emit("Invalid response received or no data")
+                    print("Invalid response or no data in response.")  # Debug
+
             except asyncio.TimeoutError:
                 self.error_occurred.emit("Server response timeout")
+                print("Timeout occurred while waiting for visitors data")  # Debug
                 return None
 
         except Exception as e:
