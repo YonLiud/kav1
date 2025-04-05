@@ -8,7 +8,7 @@ class VisitorFormDialog(QDialog):
 
         self.setWindowTitle("Visitor Form")
         self.setMinimumSize(800, 500)
-
+        
         self.layout = QFormLayout()
 
         self.name_input = QLineEdit()
@@ -51,6 +51,8 @@ class VisitorFormDialog(QDialog):
         main_layout.addWidget(scroll_area)
         self.setLayout(main_layout)
 
+        self.submitted_data = None
+
     def on_submit_clicked(self):
         name = self.name_input.text()
         visitor_id = self.visitorid_input.text()
@@ -84,7 +86,10 @@ class VisitorFormDialog(QDialog):
 
         json_str = json.dumps(visitor_data, ensure_ascii=False, indent=4)
         
-        print("Visitor JSON:\n", json_str)
+        self.submitted_data = json_str
 
         QMessageBox.information(self, "Success", "Form submitted successfully!")
         self.accept()
+
+    def get_submitted_json(self):
+        return self.submitted_data
