@@ -46,9 +46,10 @@ export class VisitorController extends BaseController {
   public async updateVisitorInside(payload: any) {
     const { id, inside } = payload;
     try {
-      const visitor = await visitorHelper.getVisitorById(id);
-      visitor.inside = inside;
-      await visitor.save();
+      const visitor = await visitorHelper.updateVisitorInside(id, inside);
+      if (!visitor) {
+        return this.sendError('VISITOR_UPDATE_FAILED', 'Visitor update failed');
+      }
       sendSyncBroadcast('getVisitorsInside', 'Visitor updated, syncing visitors...');
       return this.sendSuccess('VISITOR_UPDATED', 'Visitor inside updated successfully', visitor);
     } catch (err: unknown) {

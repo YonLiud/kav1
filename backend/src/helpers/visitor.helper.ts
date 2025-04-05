@@ -38,3 +38,22 @@ export const getAllVisitorsInside = async () => {
   });
   return visitors;
 };
+
+export const getVisitorByVisitorId = async (visitorId: string) => {
+  const visitor = await Visitor.findOne({
+    where: {
+      visitorId: visitorId,
+    },
+  });
+  if (!visitor) {
+    throw new Error('Visitor not found');
+  }
+  return visitor;
+}
+
+export const updateVisitorInside = async (visitorId: string, inside: boolean) => {
+  const visitor = await getVisitorByVisitorId(visitorId);
+  visitor.inside = inside;
+  await visitor.save();
+  return visitor;
+}

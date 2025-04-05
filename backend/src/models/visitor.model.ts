@@ -20,6 +20,7 @@ Visitor.init({
   },
   inside: {
     type: DataTypes.BOOLEAN,
+    allowNull: false,
     defaultValue: false,
   },
   meta: {
