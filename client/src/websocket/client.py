@@ -1,76 +1,92 @@
+# In websocket/client.py
 import asyncio
-import websockets
 import json
+import websockets
 from PySide6.QtCore import QObject, Signal
 
 class WebSocketClient(QObject):
     connected = Signal()
     disconnected = Signal()
     error_occurred = Signal(str)
-    visitors_updated = Signal(list)  # Emits when we get fresh visitor data
+    visitors_updated = Signal(list)
+    # Add a signal for the request-response cycle
+    request_completed = Signal(dict)
 
     def __init__(self):
         super().__init__()
         self.websocket = None
         self.connected_url = None
+        self._response_event = asyncio.Event()
+        self._last_response = None
 
     async def connect(self, url):
-        """Connect to the WebSocket server"""
+        """Connect to WebSocket server"""
         try:
-            self.websocket = await websockets.connect(url)
+            self.websocket = await websockets.connect(url, ping_interval=30)
             self.connected_url = url
             self.connected.emit()
+            asyncio.create_task(self.listen())
             return True
         except Exception as e:
             self.error_occurred.emit(f"Connection error: {str(e)}")
             return False
 
-    async def disconnect(self):
-        """Disconnect from the WebSocket server"""
-        if self.websocket:
-            await self.websocket.close()
-            self.disconnected.emit()
-            self.websocket = None
-            self.connected_url = None
-
     async def listen(self):
-        """Listen for incoming messages and handle them"""
+        """Listen for incoming messages"""
         try:
             async for message in self.websocket:
                 try:
                     data = json.loads(message)
-                    await self.handle_message(data)
+                    print("Received message:", data)  # Debug
+                    
+                    # Handle visitor data responses
+                    if data.get('type') == 'visitorsInside' or data.get('status') == 'success':
+                        visitors = data.get('payload', data.get('data', []))
+                        if isinstance(visitors, list):
+                            self.visitors_updated.emit(visitors)
+                    
+                    # Handle sync messages
+                    elif data.get('type') == 'sync' and data.get('target') == 'getVisitorsInside':
+                        await self.get_visitors_inside()
+                    
+                    # Store the last response for request-response cycle
+                    self._last_response = data
+                    self._response_event.set()
+                    
                 except json.JSONDecodeError:
                     self.error_occurred.emit("Invalid JSON received")
         except Exception as e:
-            if not isinstance(e, websockets.exceptions.ConnectionClosed):
+            if not isinstance(e, (websockets.exceptions.ConnectionClosed, asyncio.CancelledError)):
                 self.error_occurred.emit(f"Connection error: {str(e)}")
             await self.disconnect()
 
-    async def handle_message(self, data):
-        """Handle different message types from server"""
-        if data.get('type') == 'visitorsInside':
-            # Received fresh visitor data
-            self.visitors_updated.emit(data.get('payload', []))
-        
-        elif data.get('type') == 'sync' and data.get('target') == 'getVisitorsInside':
-            # Server is telling us to refresh visitor data
-            await self.get_visitors_inside()
-
     async def get_visitors_inside(self):
-        """Request current visitors inside"""
-        if self.websocket:
+        """Request and wait for visitors data"""
+        if not self.websocket:
+            self.error_occurred.emit("Not connected to server")
+            return
+
+        try:
+            # Clear previous response
+            self._response_event.clear()
+            self._last_response = None
+            
+            # Send request
             await self.websocket.send(json.dumps({
                 'type': 'getVisitorsInside'
             }))
+            print("Sent getVisitorsInside request")  # Debug
 
-    async def update_visitor_status(self, visitor_id, inside):
-        """Update visitor status (inside/outside)"""
-        if self.websocket:
-            await self.websocket.send(json.dumps({
-                'type': 'updateVisitorInside',
-                'payload': {
-                    'id': visitor_id,
-                    'inside': inside
-                }
-            }))
+            # Wait for response with timeout
+            try:
+                await asyncio.wait_for(self._response_event.wait(), timeout=5.0)
+                if self._last_response and isinstance(self._last_response.get('data'), list):
+                    return self._last_response['data']
+            except asyncio.TimeoutError:
+                self.error_occurred.emit("Server response timeout")
+                return None
+
+        except Exception as e:
+            self.error_occurred.emit(f"Request error: {str(e)}")
+            await self.disconnect()
+            return None

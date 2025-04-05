@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (
     QMessageBox, QTableWidget, QTableWidgetItem, QHeaderView,
     QHBoxLayout
 )
+import json
 from PySide6.QtCore import Qt, Signal, Slot, QTimer
 from PySide6.QtGui import QCursor
 from ui.server_change_dialog import ServerChangeDialog
@@ -102,10 +103,20 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def on_connected(self):
+        """Handle successful connection"""
         self.connection_status.setText(f"Connected to {self.websocket_client.connected_url}")
         self.connection_status.setStyleSheet("color: green;")
         self.connect_button.setText("Disconnect")
-        asyncio.create_task(self.websocket_client.get_visitors_inside())
+        # Request and display visitors
+        asyncio.create_task(self.fetch_and_display_visitors())
+
+    async def fetch_and_display_visitors(self):
+        """Fetch visitors and update table"""
+        visitors = await self.websocket_client.get_visitors_inside()
+        if visitors is not None:
+            self.update_visitors_table(visitors)
+        else:
+            QMessageBox.warning(self, "Warning", "Could not fetch visitor data")
 
     @Slot()
     def on_disconnected(self):
@@ -120,26 +131,51 @@ class MainWindow(QMainWindow):
 
     @Slot(list)
     def update_visitors_table(self, visitors):
-        """Update table with current visitors data"""
-        self.current_visitors = visitors
-        self.visitors_table.setRowCount(len(visitors))
-        
-        for row, visitor in enumerate(visitors):
-            name_item = QTableWidgetItem(visitor.get('name', ''))
-            name_item.setData(Qt.UserRole, visitor)
-            self.visitors_table.setItem(row, 0, name_item)
+        """Update table with visitor data"""
+        try:
+            print("Updating table with visitors:", len(visitors))  # Debug
+            self.visitors_table.setRowCount(0)  # Clear existing rows
             
-            self.visitors_table.setItem(row, 1, QTableWidgetItem(visitor.get('visitorId', '')))
-            
-            meta = visitor.get('meta', {})
-            self.visitors_table.setItem(row, 2, QTableWidgetItem(meta.get('company', '')))
-            self.visitors_table.setItem(row, 3, QTableWidgetItem(meta.get('department', '')))
-            
-            status = "Inside" if visitor.get('inside', False) else "Outside"
-            status_item = QTableWidgetItem(status)
-            status_item.setForeground(Qt.green if visitor.get('inside', False) else Qt.red)
-            status_item.setData(Qt.UserRole, visitor)
-            self.visitors_table.setItem(row, 4, status_item)
+            if not visitors:
+                print("No visitors received")
+                return
+
+            self.visitors_table.setRowCount(len(visitors))
+            for row, visitor in enumerate(visitors):
+                # Handle meta field (could be string or dict)
+                meta = visitor.get('meta', {})
+                if isinstance(meta, str):
+                    try:
+                        meta = json.loads(meta)
+                    except:
+                        meta = {}
+
+                # Handle inside status (could be 0/1, true/false, or string)
+                inside = visitor.get('inside', False)
+                if isinstance(inside, str):
+                    inside = inside.lower() in ('true', '1', 'yes')
+                else:
+                    inside = bool(inside)
+
+                # Set items in the table
+                self.visitors_table.setItem(row, 0, QTableWidgetItem(visitor.get('name', '')))
+                self.visitors_table.setItem(row, 1, QTableWidgetItem(visitor.get('visitorId', '')))
+                self.visitors_table.setItem(row, 2, QTableWidgetItem(meta.get('company', '')))
+                self.visitors_table.setItem(row, 3, QTableWidgetItem(meta.get('department', '')))
+                
+                status_item = QTableWidgetItem("Inside" if inside else "Outside")
+                status_item.setForeground(Qt.green if inside else Qt.red)
+                status_item.setData(Qt.UserRole, visitor)  # Store full data
+                self.visitors_table.setItem(row, 4, status_item)
+
+        except Exception as e:
+            print("Error updating table:", e)
+            self.error_occurred.emit(f"Display error: {str(e)}")
+
+        except Exception as e:
+            print("Error updating table:", e)
+            self.error_occurred.emit(f"Display error: {str(e)}")
+            self.visitors_table.setRowCount(0)
 
     def clear_visitors_table(self):
         """Clear the visitors table"""
