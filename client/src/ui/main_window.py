@@ -304,13 +304,18 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         """Clean up when window is closed"""
         async def cleanup():
-            await self.websocket_client.disconnect()
+            if self.websocket_client.websocket:
+                await self.websocket_client.disconnect()
         
         # Run cleanup synchronously
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            loop.create_task(cleanup())
-        else:
-            loop.run_until_complete(cleanup())
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                loop.create_task(cleanup())
+            else:
+                loop.run_until_complete(cleanup())
+        except RuntimeError:
+            # No event loop
+            pass
         
         super().closeEvent(event)
