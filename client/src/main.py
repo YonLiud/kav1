@@ -1,7 +1,8 @@
 import sys
 from PySide6.QtWidgets import QApplication
 from ui.main_window import MainWindow
-from stylesheet import stylesheet
+from qasync import QEventLoop, asyncClose, asyncSlot
+import asyncio
 
 def main():
     app = QApplication(sys.argv)
@@ -9,11 +10,16 @@ def main():
     app.setOrganizationName("yxnliu")
     app.setOrganizationDomain("yxnliu.net")
 
-    app.setStyle("WindowsVista")
+    loop = QEventLoop(app)
+    asyncio.set_event_loop(loop)
 
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
+    # Create main window
+    main_window = MainWindow()
+    main_window.show()
+
+    # Start the event loop
+    with loop:
+        sys.exit(loop.run_forever())
 
 if __name__ == "__main__":
-    main()
+    main()  

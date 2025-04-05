@@ -20,13 +20,17 @@ class ServerChangeDialog(QDialog):
 
         self.setLayout(layout)
 
+        self.url = ""
+
     def on_connect_clicked(self):
-        url = self.url_input.text().strip()
-        if not url:
-            QMessageBox.warning(self, "Input Error", "The server URL cannot be empty.")
+        self.url = self.url_input.text().strip()
+        if not self.url:
+            QMessageBox.warning(self, "Input Error", "The server URL cannot be empty. Using default...")
+            self.url= "ws://localhost:3000"
+            self.accept()
         else:
             self.accept()
 
     def get_url(self):
-        return self.url_input.text()
+        return self.url
     
