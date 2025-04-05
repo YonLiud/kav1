@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QFormLayout, QMessageBox
 from PySide6.QtCore import Qt
 
-class SearchDialog(QDialog):
+class SearchVisitorDialog(QDialog):
     def __init__(self):
         super().__init__()
 
