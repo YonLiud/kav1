@@ -9,6 +9,7 @@ type MessageHandler = (ws: WebSocket, payload?: any) => Promise<any>;
 
 const routes: Record<string, MessageHandler> = {
   getUsers: userController.getUsers.bind(userController),
+  getUsersInside: userController.getUsersInside.bind(userController),
   getUserById: userController.getUserById.bind(userController),
   getUsersByName: userController.getUsersByName.bind(userController),
   createUser: userController.createUser.bind(userController),

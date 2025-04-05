@@ -17,6 +17,19 @@ export class UserController extends BaseController {
     }
   }
 
+  public async getUsersInside() {
+    try {
+      const users = await userHelper.getAllUsersInside();
+      if (users.length === 0) {
+        return this.sendError('NO_USERS_FOUND', 'No users found in the database');
+      }
+      return this.sendSuccess('USERS_RETRIEVED', 'Users fetched successfully', users);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      return this.sendError('FETCH_USERS_ERROR', errorMessage);
+    }
+  }
+
   public async createUser(payload: any) {
     try {
       const newUser = await User.create(payload);

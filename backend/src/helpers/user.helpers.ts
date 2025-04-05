@@ -24,3 +24,12 @@ export const getAllUsers = async () => {
   const users = await User.findAll();
   return users;
 };
+
+export const getAllUsersInside = async () => {
+  const users = await User.findAll({
+    where: {
+      inside: true,
+    },
+  });
+  return users;
+};
