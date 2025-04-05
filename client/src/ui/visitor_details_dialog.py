@@ -3,7 +3,6 @@ from PySide6.QtWidgets import (
     QPushButton, QMessageBox
 )
 from PySide6.QtCore import Qt
-import sys
 
 class VisitorDetailsDialog(QDialog):
     def __init__(self, visitor_data):
