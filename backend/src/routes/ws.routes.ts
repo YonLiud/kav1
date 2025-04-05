@@ -1,18 +1,22 @@
 import { WebSocket } from 'ws';
-import * as userController from '../controllers/user.controller';
+import { UserController } from '../controllers/user.controller';
 import * as systemController from '../controllers/system.controller';
+import { getUserById } from '../helpers/user.helpers';
+
+const userController = new UserController();  // Instantiate the controller
 
 type MessageHandler = (ws: WebSocket, payload?: any) => Promise<any>;
 
 const routes: Record<string, MessageHandler> = {
-  getUsers: userController.getUsers,
-  createUser: userController.createUser,
-  updateUserInside: userController.updateUserInside,
+  getUsers: userController.getUsers.bind(userController),
+  getUserById: userController.getUserById.bind(userController),
+  getUsersByName: userController.getUsersByName.bind(userController),
+  createUser: userController.createUser.bind(userController),
+  updateUserInside: userController.updateUserInside.bind(userController),
   ping: systemController.ping,
 };
 
 export const handleMessage = async (ws: WebSocket, message: string) => {
-  console.log('📦 message:', message);
   try {
     const { type, payload } = JSON.parse(message);
     
@@ -21,16 +25,23 @@ export const handleMessage = async (ws: WebSocket, message: string) => {
 
     const handler = routes[type];
     if (!handler) {
-      return ws.send(JSON.stringify({ type: 'error', message: 'Unknown command' }));
+      return ws.send(JSON.stringify({
+        status: 'error',
+        code: 'UNKNOWN_COMMAND',
+        message: 'Unknown command',
+      }));
     }
 
     const result = await handler(payload);
 
-    if (result) {
-      ws.send(JSON.stringify({ type: `${type}Success`, data: result }));
-    }
+    ws.send(JSON.stringify(result));
+
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    ws.send(JSON.stringify({ type: 'error', message: errorMessage }));
+    ws.send(JSON.stringify({
+      status: 'error',
+      code: 'SERVER_ERROR',
+      message: errorMessage,
+    }));
   }
 };
