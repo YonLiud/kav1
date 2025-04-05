@@ -9,3 +9,6 @@ package-lock.json
 # Database
 *.sqlite
 *.db
+
+# test files
+test.js
