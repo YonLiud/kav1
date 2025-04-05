@@ -11,4 +11,4 @@ package-lock.json
 *.db
 
 # test files
-test*.js
+test*.*

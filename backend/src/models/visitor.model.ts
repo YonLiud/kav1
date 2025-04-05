@@ -13,9 +13,18 @@ Visitor.init({
     allowNull: false,
     unique: true
   },
+  visitorId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
   inside: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  },
+  meta: {
+    type: DataTypes.JSONB,
+    defaultValue: {},
   }
 }, { sequelize, modelName: 'visitor' });
 
