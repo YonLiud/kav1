@@ -51,16 +51,15 @@ class MainWindow(QMainWindow):
     def setup_visitors_table(self):
         """Setup the visitors table with clickable rows"""
         self.visitors_table = QTableWidget()
-        self.visitors_table.setColumnCount(5)
+        self.visitors_table.setColumnCount(3)
         self.visitors_table.setHorizontalHeaderLabels([
-            "Name", "Visitor ID", "Company", "Department", "Status"
+            "Name", "Visitor ID", "Status"
         ])
         self.visitors_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.visitors_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.visitors_table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.visitors_table.cellDoubleClicked.connect(self.show_visitor_details)
         
-        # Style for clickable rows
         self.visitors_table.setCursor(QCursor(Qt.PointingHandCursor))
         self.layout.addWidget(self.visitors_table)
 
@@ -160,8 +159,6 @@ class MainWindow(QMainWindow):
                 # Set items in the table
                 self.visitors_table.setItem(row, 0, QTableWidgetItem(visitor.get('name', '')))
                 self.visitors_table.setItem(row, 1, QTableWidgetItem(visitor.get('visitorId', '')))
-                self.visitors_table.setItem(row, 2, QTableWidgetItem(meta.get('company', '')))
-                self.visitors_table.setItem(row, 3, QTableWidgetItem(meta.get('department', '')))
                 
                 status_item = QTableWidgetItem("Inside" if inside else "Outside")
                 status_item.setForeground(Qt.green if inside else Qt.red)
