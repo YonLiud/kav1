@@ -128,7 +128,6 @@ class MainWindow(QMainWindow):
     def on_error(self, error):
         QMessageBox.critical(self, "WebSocket Error", error)
 
-    @Slot(list)
     def update_visitors_table(self, visitors):
         """Update table with visitor data"""
         try:
@@ -149,25 +148,21 @@ class MainWindow(QMainWindow):
                     except:
                         meta = {}
 
-                # Handle inside status (could be 0/1, true/false, or string)
                 inside = visitor.get('inside', False)
                 if isinstance(inside, str):
                     inside = inside.lower() in ('true', '1', 'yes')
                 else:
                     inside = bool(inside)
 
-                # Set items in the table
-                self.visitors_table.setItem(row, 0, QTableWidgetItem(visitor.get('name', '')))
+                name_item = QTableWidgetItem(visitor.get('name', ''))
+                name_item.setData(Qt.UserRole, visitor)
+                self.visitors_table.setItem(row, 0, name_item)
+                
                 self.visitors_table.setItem(row, 1, QTableWidgetItem(visitor.get('visitorId', '')))
                 
                 status_item = QTableWidgetItem("Inside" if inside else "Outside")
                 status_item.setForeground(Qt.green if inside else Qt.red)
-                status_item.setData(Qt.UserRole, visitor)  # Store full data
-                self.visitors_table.setItem(row, 4, status_item)
-
-        except Exception as e:
-            print("Error updating table:", e)
-            self.error_occurred.emit(f"Display error: {str(e)}")
+                self.visitors_table.setItem(row, 2, status_item)
 
         except Exception as e:
             print("Error updating table:", e)
@@ -198,14 +193,19 @@ class MainWindow(QMainWindow):
 
     def show_visitor_details(self, row, column):
         """Show details when visitor row is clicked"""
-        visitor_item = self.visitors_table.item(row, 0)
+        visitor_item = self.visitors_table.item(row, 0)  # Get from name column
         if visitor_item:
             visitor = visitor_item.data(Qt.UserRole)
-            self.open_visitor_details(visitor)
-
+            if visitor:  # Check if visitor data exists
+                self.open_visitor_details(visitor)
+            else:
+                print("No visitor data found for selected row")
+                QMessageBox.warning(self, "Error", "No visitor data available")
     def show_selected_visitor_details(self):
         """Show details for currently selected visitor"""
+        print("Showing selected visitor")
         selected = self.visitors_table.selectedItems()
+
         if selected:
             visitor = selected[0].data(Qt.UserRole)
             self.open_visitor_details(visitor)
@@ -243,7 +243,6 @@ class MainWindow(QMainWindow):
             submitted_json = dialog.get_submitted_json()
             if submitted_json:
                 print("Submitted JSON from dialog:\n", submitted_json)
-                # Here you would send this to server via WebSocket
                 asyncio.create_task(self.websocket_client.create_visitor(submitted_json))
 
     def visitor_details(self):
