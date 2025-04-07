@@ -5,6 +5,8 @@ class ConnectionDialog(QDialog):
         super().__init__()
         self.setWindowTitle("Connect to Server")
 
+        self.setFixedSize(250,100)
+
         self.input = QLineEdit()
         self.input.setPlaceholderText("Enter server address (e.g., localhost:3000)")
         

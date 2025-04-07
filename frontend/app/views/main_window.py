@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget, 
-                             QTextEdit, QLineEdit, QPushButton, QLabel)
+                             QTextEdit, QLineEdit, QPushButton, QLabel,
+                             QMessageBox, QApplication)
 
 from app.core.ws_client import WebSocketClient
 from app.core.api_client import ApiClient
@@ -27,6 +28,8 @@ class MainWindow(QMainWindow):
         
         self.log = QTextEdit()
         self.log.setReadOnly(True)
+
+        self.ws_status_label = QLabel("WebSocket Status: Disconnected")
         
         self.search_input = QLineEdit()
         self.search_button = QPushButton("Search Visitors")
@@ -34,6 +37,7 @@ class MainWindow(QMainWindow):
         
         layout = QVBoxLayout()
         layout.addWidget(self.log)
+        layout.addWidget(self.ws_status_label)
         layout.addWidget(QLabel("Search Visitors:"))
         layout.addWidget(self.search_input)
         layout.addWidget(self.search_button)
@@ -51,8 +55,8 @@ class MainWindow(QMainWindow):
     def connect_signals(self):
         self.api_client.response_received.disconnect()
         self.ws_client.message_received.connect(self.handle_ws_message)
-        self.ws_client.connected.connect(lambda: self.log.append("WebSocket Connected"))
-        self.ws_client.disconnected.connect(lambda: self.log.append("WebSocket Disconnected"))
+        self.ws_client.connected.connect(self.handle_connect)
+        self.ws_client.disconnected.connect(self.handle_disconnect)
         
         self.api_client.response_received.connect(self.handle_api_response)
         self.api_client.error_occurred.connect(self.log_error)
@@ -96,3 +100,10 @@ class MainWindow(QMainWindow):
             address = dialog.get_address()
             if address:
                 Settings.set_url(address)
+
+    def handle_connect(self):
+        self.ws_status_label.setText(f"WebSocket Connected to {Settings.get_ws_url()}")
+        pass
+
+    def handle_disconnect(self):
+        self.ws_status_label.setText("WebSocket Disconnected")
