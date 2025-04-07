@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QLineEdit, QRadioButton, QDialogButtonBox, QLabel, QListWidget
+    QDialog, QVBoxLayout, QLineEdit, QRadioButton, QPushButton, QLabel
 )
-from PySide6.QtCore import Qt
 from app.core.api_client import ApiClient  # Assuming ApiClient is correctly imported
+from .search_result_dialog import SearchResultDialog  # Import the new result dialog
 
 class SearchDialog(QDialog):
     def __init__(self, parent=None):
@@ -30,15 +30,11 @@ class SearchDialog(QDialog):
         self.layout.addWidget(self.search_by_id)
 
         # Button for search
-        self.search_button = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
-        self.search_button.accepted.connect(self.search_visitors)
+        self.search_button = QPushButton("Search")
+        self.search_button.clicked.connect(self.search_visitors)
         self.layout.addWidget(self.search_button)
 
-        # List widget for displaying the search results
-        self.results_list = QListWidget(self)
-        self.layout.addWidget(self.results_list)
-
-        # Connect the signal from ApiClient to the method that handles the results
+        # Connect the response_received signal to handle_search_results
         self.api_client.response_received.connect(self.handle_search_results)
 
     def search_visitors(self):
@@ -48,20 +44,12 @@ class SearchDialog(QDialog):
                 self.api_client.search_visitors(query)  # Searching by name
             elif self.search_by_id.isChecked():
                 self.api_client.search_visitors(query)  # Searching by ID
-            self.results_list.clear()  # Clear previous results
-            self.results_list.addItem("Searching...")  # Show loading message
+
+            # Optionally, you can keep this dialog open until the results come back
+            # self.accept()  # This can be removed if you want the dialog to stay open
 
     def handle_search_results(self, results):
-        # Check if results are valid and extract the list of visitors
-        self.results_list.clear()  # Clear the loading message or previous results
-
-        if 'visitors' in results:
-            visitors = results['visitors']
-            if visitors:
-                for visitor in visitors:
-                    display_name = f"{visitor['visitorid']} - {visitor['name']}"  # Display ID and Name
-                    self.results_list.addItem(display_name)
-            else:
-                self.results_list.addItem("No visitors found")
-        else:
-            self.results_list.addItem("Error: Invalid response")
+        # Open the results in a new dialog window
+        if results and 'visitors' in results:
+            search_result_dialog = SearchResultDialog(results['visitors'], self)
+            search_result_dialog.exec()  # Open the result dialog modally
