@@ -6,8 +6,8 @@ from sqlalchemy import or_
 def get_visitors_inside(db: Session):
     return db.query(models.Visitor).filter(models.Visitor.inside == True).all()
 
-def create_visitor(db: Session, name: str, visitorid: str, inside: bool, properties: dict):
-    db_visitor = models.Visitor(name=name, visitorid=visitorid, inside=inside, properties=properties)
+def create_visitor(db: Session, name: str, visitorid: str, properties: dict):
+    db_visitor = models.Visitor(name=name, visitorid=visitorid, inside=False, properties=properties)
     db.add(db_visitor)
     db.commit()
     db.refresh(db_visitor)
