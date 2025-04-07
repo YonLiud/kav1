@@ -47,15 +47,15 @@ class SearchDialog(QDialog):
 
     def handle_search_results(self, results):
         if results and 'visitors' in results:
-            search_result_dialog = SearchResultDialog(results['visitors'], self)
-            search_result_dialog.exec()
+            search_result_dialog = SearchResultDialog(self.search_input.text(), results['visitors'])
             self.accept()
+            search_result_dialog.exec()
         else:
             self.handle_no_result()
     
     def handle_search_by_id_results(self, results):
         if results and 'visitor' in results:
-            visitor_details_dialog = VisitorDetailsDialog(results['visitor'], self)
+            visitor_details_dialog = VisitorDetailsDialog(results['visitor'])
             visitor_details_dialog.exec()
         else:
             self.handle_no_result()

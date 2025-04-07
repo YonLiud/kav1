@@ -6,7 +6,7 @@ from app.core.api_client import ApiClient
 from .visitor_details_dialog import VisitorDetailsDialog
 
 class SearchResultDialog(QDialog):
-    def __init__(self, results, parent=None):
+    def __init__(self,query, results, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Search Results")
         self.setMinimumSize(400, 300)
@@ -16,7 +16,7 @@ class SearchResultDialog(QDialog):
         self.layout.setContentsMargins(12, 12, 12, 12)
         self.layout.setSpacing(10)
         
-        self.title_label = QLabel("Visitor Search Results", self)
+        self.title_label = QLabel(f'"{query}" Search Results', self)
         self.title_label.setAlignment(Qt.AlignCenter)
         font = self.title_label.font()
         font.setBold(True)
@@ -32,7 +32,7 @@ class SearchResultDialog(QDialog):
             self.no_results_label.setWordWrap(True)
             self.layout.addWidget(self.no_results_label)
         else:
-            self.results_count = QLabel(f"Found {len(results)} visitor(s):", self)
+            self.results_count = QLabel(f"Found <b>{len(results)}</b> visitor(s):", self)
             self.layout.addWidget(self.results_count)
             
             self.results_list = QListWidget(self)
@@ -44,7 +44,6 @@ class SearchResultDialog(QDialog):
                 display_name = f"{visitor['visitorid']} - {visitor['name']}"
                 self.results_list.addItem(display_name)
             
-            # Connect itemClicked signal to the method
             self.results_list.itemClicked.connect(self.on_item_clicked)
         
         self.layout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding))
@@ -56,6 +55,7 @@ class SearchResultDialog(QDialog):
         
         self.close_button = QPushButton("Close", self)
         self.close_button.clicked.connect(self.accept)
+        self.close_button.setFocusPolicy(Qt.NoFocus)
         self.button_layout.addWidget(self.close_button)
         
         self.layout.addLayout(self.button_layout)
@@ -79,5 +79,5 @@ class SearchResultDialog(QDialog):
 
     def on_item_clicked(self, item):
         """Handle item click event"""
-        visitorid = item.text().split(' - ')[0]  # Extract visitor ID from the item text
+        visitorid = item.text().split(' - ')[0]
         self.search_details(visitorid)
