@@ -26,6 +26,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @router.get("/visitors")
 def get_visitors(db: Session = Depends(database.get_db)):
+    return crud.get_visitors(db)
+
+@router.get("/visitors/inside")
+def get_visitors_inside(db: Session = Depends(database.get_db)):
     return crud.get_visitors_inside(db)
 
 @router.post("/visitor")

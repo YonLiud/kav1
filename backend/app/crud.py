@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from . import models
 
+def get_visitors(db: Session):
+    return db.query(models.Visitor).all()
+
 def get_visitors_inside(db: Session):
     return db.query(models.Visitor).filter(models.Visitor.inside == True).all()
 
@@ -12,7 +15,7 @@ def create_visitor(db: Session, name: str, visitorid: str, properties: dict):
     return db_visitor
 
 def update_visitor_status(db: Session, visitor_id: str, is_inside: bool):
-    visitor = db.query(models.Visitor).filter(models.Visitor.visitor_id == visitor_id).first()
+    visitor = db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
     
     if visitor:
         visitor.inside = is_inside
