@@ -107,3 +107,12 @@ class MainWindow(QMainWindow):
 
     def handle_disconnect(self):
         self.ws_status_label.setText("WebSocket Disconnected")
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setWindowTitle("Connection Lost")
+        msg.setText("Please ensure your network is active and the server is accessible.")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
+
+        QApplication.quit()
