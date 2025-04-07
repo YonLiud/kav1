@@ -1,58 +1,67 @@
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QDialog, QLabel, QLineEdit, 
-    QRadioButton, QPushButton
+    QDialog, QVBoxLayout, QLineEdit, QRadioButton, QDialogButtonBox, QLabel, QListWidget
 )
 from PySide6.QtCore import Qt
-
-from app.core.api_client import ApiClient
+from app.core.api_client import ApiClient  # Assuming ApiClient is correctly imported
 
 class SearchDialog(QDialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Search Visitors")
 
-        self.api_client = ApiClient.get_instance()
-        self.setWindowTitle("Search")
-        self.setFixedSize(300, 150)
+        # Access the Singleton instance of ApiClient
+        self.api_client = ApiClient.get_instance()  # Use get_instance to fetch the singleton
 
-        layout = QVBoxLayout()
+        # Set up your dialog UI
+        self.layout = QVBoxLayout(self)
 
-        self.label = QLabel("Enter search query:")
-        layout.addWidget(self.label)
+        self.search_label = QLabel("Enter your search query:")
+        self.layout.addWidget(self.search_label)
 
         self.search_input = QLineEdit(self)
-        layout.addWidget(self.search_input)
+        self.layout.addWidget(self.search_input)
 
-        radio_layout = QHBoxLayout()
+        # Radio Buttons for search type
+        self.search_by_name = QRadioButton("Search by Name", self)
+        self.search_by_name.setChecked(True)
+        self.layout.addWidget(self.search_by_name)
 
-        self.search_by_name_radio = QRadioButton("Search by Name")
-        self.search_by_name_radio.setChecked(True)
-        radio_layout.addWidget(self.search_by_name_radio)
+        self.search_by_id = QRadioButton("Search by ID", self)
+        self.layout.addWidget(self.search_by_id)
 
-        self.search_by_id_radio = QRadioButton("Search by ID")
-        radio_layout.addWidget(self.search_by_id_radio)
+        # Button for search
+        self.search_button = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+        self.search_button.accepted.connect(self.search_visitors)
+        self.layout.addWidget(self.search_button)
 
-        layout.addLayout(radio_layout)
+        # List widget for displaying the search results
+        self.results_list = QListWidget(self)
+        self.layout.addWidget(self.results_list)
 
-        self.search_button = QPushButton("Search")
-        self.search_button.clicked.connect(self.search_visitors)
-        layout.addWidget(self.search_button)
-
-        self.setLayout(layout)
+        # Connect the signal from ApiClient to the method that handles the results
+        self.api_client.response_received.connect(self.handle_search_results)
 
     def search_visitors(self):
         query = self.search_input.text()
         if query:
-            if self.search_by_name_radio.isChecked():
-                self.api_client.search_visitors(query)
-            elif self.search_by_id_radio.isChecked():
-                self.api_client.search_visitors(query)
+            if self.search_by_name.isChecked():
+                self.api_client.search_visitors(query)  # Searching by name
+            elif self.search_by_id.isChecked():
+                self.api_client.search_visitors(query)  # Searching by ID
+            self.results_list.clear()  # Clear previous results
+            self.results_list.addItem("Searching...")  # Show loading message
 
-        self.accept()
+    def handle_search_results(self, results):
+        # Check if results are valid and extract the list of visitors
+        self.results_list.clear()  # Clear the loading message or previous results
 
-if __name__ == "__main__":
-    app = QApplication([])
-
-    dialog = SearchDialog()
-    dialog.exec()
-
-    app.exec()
+        if 'visitors' in results:
+            visitors = results['visitors']
+            if visitors:
+                for visitor in visitors:
+                    display_name = f"{visitor['visitorid']} - {visitor['name']}"  # Display ID and Name
+                    self.results_list.addItem(display_name)
+            else:
+                self.results_list.addItem("No visitors found")
+        else:
+            self.results_list.addItem("Error: Invalid response")
