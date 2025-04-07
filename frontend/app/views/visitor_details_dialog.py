@@ -78,8 +78,12 @@ class VisitorDetailsDialog(QDialog):
             properties_layout.addWidget(self.no_properties_label)
         
         self.layout.addWidget(self.properties_frame)
-        
-        self.toggle_button = QPushButton("Toggle Inside")
+
+        isInside = self.visitor_data["inside"]
+        print(isInside)
+        print(type(isInside))
+
+        self.toggle_button = QPushButton(f"Mark {'Outside' if isInside else 'Inside'}")
         self.toggle_button.clicked.connect(self.toggle_inside)
         self.layout.addWidget(self.toggle_button)
         

@@ -1,8 +1,9 @@
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget, 
                              QTextEdit, QLineEdit, QPushButton, QLabel,
-                             QListWidget, QSpacerItem, QSizePolicy, QFrame, 
+                             QListWidget, QHBoxLayout, QSizePolicy, QFrame, 
                              QMessageBox, QApplication)
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
 
 from app.core.api_client import ApiClient
 from app.core.ws_client import WebSocketClient
@@ -36,20 +37,36 @@ class MainWindow(QMainWindow):
         self.ws_status_label = QLabel("WebSocket Status: Disconnected")
 
         self.search_button = QPushButton("Search Visitors")
+        self.add_button = QPushButton("Add Visitor")
         self.sync_button = QPushButton("Force Sync")
+        button_height = 40
+        self.search_button.setFixedHeight(button_height)
+        self.sync_button.setFixedHeight(button_height)
+        self.add_button.setFixedHeight(button_height)
 
+        font = QFont()
+        font.setPointSize(13)
         self.visitors_list = QListWidget(self)
+        self.visitors_list.setFont(font)
         self.visitors_list.setAlternatingRowColors(True)
         self.visitors_list.setSelectionMode(QListWidget.SingleSelection)
         self.visitors_list.setMinimumHeight(300)
+
         self.visitors_list.clicked.connect(self.on_visitor_clicked)
 
-        self.log.setStyleSheet("background-color: #141414; color: green;")  # Dark background
+        self.log.setStyleSheet("background-color: #1c1c1c; color: #dcdcdc;")
 
         layout = QVBoxLayout()
+
         layout.addWidget(self.ws_status_label)
-        layout.addWidget(self.search_button)
-        layout.addWidget(self.sync_button)
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.sync_button)
+        button_layout.addWidget(self.search_button)
+        button_layout.addWidget(self.add_button)
+
+        layout.addLayout(button_layout)
+
         layout.addWidget(QLabel("Visitors Inside:"))
         layout.addWidget(self.visitors_list)
         layout.addWidget(self.log)
@@ -102,16 +119,18 @@ class MainWindow(QMainWindow):
 
     def handle_get_visitors(self, response):
         if response and isinstance(response, list):
+            self.write_to_log(response)
             self.update_visitors_list(response)
         else:
-            self.write_to_log("No visitors found in the response.")
+            self.visitors_list.clear()
 
     def update_visitors_list(self, visitors):
         """Update the visitors list with those currently inside."""
-        self.visitors_list.clear()  # Clear the existing list
-        for visitor in visitors:
-            display_name = f"{visitor['visitorid']} - {visitor['name']}"
-            self.visitors_list.addItem(display_name)
+        self.visitors_list.clear()
+        if len(visitors)>0: 
+            for visitor in visitors:
+                display_name = f"{visitor['visitorid']} - {visitor['name']}"
+                self.visitors_list.addItem(display_name)
 
     def on_visitor_clicked(self):
         """Handle visitor item click."""
@@ -160,4 +179,4 @@ class MainWindow(QMainWindow):
 
     def write_to_log(self, message:str):
         now = datetime.now()
-        self.log.append(f"{now} - {message}\n")
+        self.log.append(f"{now} - {message}")
