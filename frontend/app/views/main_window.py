@@ -4,6 +4,8 @@ from app.core.ws_client import WebSocketClient
 from app.core.api_client import ApiClient
 from app.core.settings import Settings
 
+from .search_dialog import SearchDialog
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -13,6 +15,7 @@ class MainWindow(QMainWindow):
 
     def setup_ui(self):
         self.setWindowTitle("Visitor Management Client")
+        self.setMinimumSize(800,600)
         self.setGeometry(100, 100, 800, 600)
         
         # Widgets
@@ -37,7 +40,7 @@ class MainWindow(QMainWindow):
 
     def setup_clients(self):
         self.ws_client = WebSocketClient()
-        self.api_client = ApiClient()
+        self.api_client = ApiClient.get_instance()
         self.ws_client.connect(Settings.get_ws_url())
 
     def connect_signals(self):
@@ -51,7 +54,7 @@ class MainWindow(QMainWindow):
         self.api_client.error_occurred.connect(self.log_error)
         
         # Button signals
-        self.search_button.clicked.connect(self.search_visitors)
+        self.search_button.clicked.connect(self.open_search_dialog)
         self.sync_button.clicked.connect(self.force_sync)
 
     def handle_ws_message(self, message: str):
@@ -66,11 +69,15 @@ class MainWindow(QMainWindow):
     def log_error(self, error: str):
         self.log.append(f"Error: {error}")
 
-    def search_visitors(self):
-        query = self.search_input.text()
-        if query:
-            self.api_client.search_visitors(query)
+    # def search_visitors(self):
+    #     query = self.search_input.text()
+    #     if query:
+    #         self.api_client.search_visitors(query)
 
     def force_sync(self):
         self.log.append("Manual sync initiated...")
         self.api_client.get_visitors()
+
+    def open_search_dialog(self):
+        dialog = SearchDialog()
+        dialog.exec()

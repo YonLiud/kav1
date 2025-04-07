@@ -4,6 +4,9 @@ from app.views.main_window import MainWindow
 
 def main():
     app = QApplication(sys.argv)
+
+    app.setStyle("Fusion")
+
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

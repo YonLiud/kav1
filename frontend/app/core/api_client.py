@@ -8,10 +8,26 @@ class ApiClient(QObject):
     response_received = Signal(dict)
     error_occurred = Signal(str)
 
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(ApiClient, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+    
+    @classmethod
+    def get_instance(cls):
+        """Method to get the singleton instance of ApiClient."""
+        if cls._instance is None:
+            cls._instance = ApiClient()
+        return cls._instance
+
+
     def __init__(self):
         super().__init__()
-        self.manager = QNetworkAccessManager()
-        self.manager.finished.connect(self._handle_response)
+        if not hasattr(self, 'manager'):
+            self.manager = QNetworkAccessManager()
+            self.manager.finished.connect(self._handle_response)
 
     def get_visitors(self):
         url = Settings.get_http_url("/visitors")
