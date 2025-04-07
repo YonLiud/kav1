@@ -1,9 +1,29 @@
 # routes.py
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
-from . import crud, schemas, database
-
+from typing import List
+from . import crud, schemas, database, websocket
 router = APIRouter()
+
+ws_manager = websocket.WebSocketManager()
+
+#? Websocket Routes
+
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await ws_manager.connect(websocket)
+    print("✅ Client connected")
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            print(f"📨 Received: {data}")
+            await websocket.send_text("Message Received: " + data)
+    except WebSocketDisconnect:
+        ws_manager.disconnect(websocket)
+        print("❌ Client disconnected")
+
+#? HTTP Routes
 
 @router.get("/visitors")
 def get_visitors(db: Session = Depends(database.get_db)):
