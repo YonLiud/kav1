@@ -9,3 +9,4 @@ class Visitor(Base):
     visitorid = Column(String, unique=True, index=True, nullable=False)
     inside = Column(Boolean, default=False, nullable=False)
     properties = Column("properties", JSON, nullable=True)
+

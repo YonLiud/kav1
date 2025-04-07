@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 from typing import List
 from . import crud, schemas, database, websocket
@@ -29,8 +29,13 @@ def get_visitors(db: Session = Depends(database.get_db)):
     return crud.get_visitors_inside(db)
 
 @router.post("/visitor")
-def add_visitor(name: str, visitorid: str, properties: dict, db: Session = Depends(database.get_db)):
-    return crud.create_visitor(db=db, name=name, visitorid=visitorid, properties=properties)
+def add_visitor(visitor: schemas.VisitorCreate, db: Session = Depends(database.get_db)):
+    db_visitor = crud.create_visitor(db=db, name=visitor.name, visitorid=visitor.visitorid, properties=visitor.properties)
+    if db_visitor:
+        return db_visitor
+    else:
+        raise HTTPException(status_code=400, detail="Failed to create visitor")
+
 
 @router.get("/visitors/search")
 def search_visitors(search_query: str, db: Session = Depends(database.get_db)):
