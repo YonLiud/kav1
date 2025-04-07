@@ -5,7 +5,7 @@ import json
 from .settings import Settings
 
 class ApiClient(QObject):
-    response_received = Signal(dict)
+    response_received = Signal(object)
     error_occurred = Signal(str)
 
     _instance = None
@@ -70,6 +70,7 @@ class ApiClient(QObject):
             else:
                 decoded_data = raw_data.data().decode('utf-8')
                 data = json.loads(decoded_data)
+                print("Parsed data before emitting:", data)
                 self.response_received.emit(data)
         finally:
             reply.deleteLater()

@@ -58,6 +58,8 @@ class MainWindow(QMainWindow):
     def handle_ws_message(self, message: str):
         self.log.append(message)
         if "sync" in message.lower():
+            self.api_client.response_received.disconnect()
+            self.api_client.response_received.connect(self.handle_get_visitors)
             self.api_client.get_visitors()
 
     def handle_api_response(self, response: dict):
@@ -74,3 +76,12 @@ class MainWindow(QMainWindow):
     def open_search_dialog(self):
         dialog = SearchDialog()
         dialog.exec()
+    
+    def handle_get_visitors(self, results):
+        print(f"{type(results)} ---------------------------------------")
+        print(str(results))
+        # if results and "visitors" in results:
+        #     for visitor in results["visitors"]:
+        #         self.log.append(f"Visitor: {visitor['name']} (ID: {visitor['visitorid']})")
+        # else:
+        #     self.log.append("No visitors found in the response.")

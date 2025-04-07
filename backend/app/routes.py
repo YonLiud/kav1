@@ -11,16 +11,12 @@ ws_manager = websocket.WebSocketManager()
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await ws_manager.connect(websocket)
-    print("✅ Client connected")
-
     try:
         while True:
             data = await websocket.receive_text()
-            print(f"📨 Received: {data}")
             await ws_manager.send_personal_message(data, websocket)
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)
-        print("❌ Client disconnected")
 
 #? HTTP Routes
 
