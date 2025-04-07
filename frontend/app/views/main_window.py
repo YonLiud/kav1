@@ -1,14 +1,19 @@
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget, 
                              QTextEdit, QLineEdit, QPushButton, QLabel)
+
 from app.core.ws_client import WebSocketClient
 from app.core.api_client import ApiClient
 from app.core.settings import Settings
 
 from .search_dialog import SearchDialog
+from .connection_dialog import ConnectionDialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.ask_for_connection()
+
         self.setup_ui()
         self.setup_clients()
         self.connect_signals()
@@ -83,3 +88,11 @@ class MainWindow(QMainWindow):
                 self.log.append(f"Visitor: {visitor['name']} (ID: {visitor['visitorid']})")
         else:
             self.log.append("No visitors found in the response.")
+
+    def ask_for_connection(self):
+        pass
+        dialog = ConnectionDialog()
+        if dialog.exec():
+            address = dialog.get_address()
+            if address:
+                Settings.set_url(address)

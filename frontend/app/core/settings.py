@@ -1,11 +1,14 @@
 class Settings:
-    BASE_URL = "http://localhost:3000"
-    WS_URL = "ws://localhost:3000/ws"
-    
+    URL = "localhost:3000"
+
     @classmethod
     def get_http_url(cls, endpoint: str):
-        return f"{cls.BASE_URL}{endpoint}"
-    
+        return f"http://{cls.URL}{endpoint}"
+
     @classmethod
     def get_ws_url(cls):
-        return cls.WS_URL
+        return f"ws://{cls.URL}/ws"
+
+    @classmethod
+    def set_url(cls, input: str):
+        cls.URL = input
