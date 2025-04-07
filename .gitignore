@@ -1,6 +1,6 @@
 # Python
 __pycache__
-venv
+*venv*
 
 # JavaScript
 node_modules
@@ -12,3 +12,6 @@ package-lock.json
 
 # test files
 test*.*
+
+# VSCode files
+.vscode
