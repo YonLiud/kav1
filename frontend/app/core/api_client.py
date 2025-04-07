@@ -33,6 +33,10 @@ class ApiClient(QObject):
         url = Settings.get_http_url("/visitors")
         self._send_request(url, "GET")
 
+    def get_visitors_inside(self):
+        url = Settings.get_http_url("/visitors/inside")
+        self._send_request(url, "GET")
+
     def get_visitor_by_id(self, query: str):
         url = Settings.get_http_url(f"/visitors/{query}")
         self._send_request(url, "GET")

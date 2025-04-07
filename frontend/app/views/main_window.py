@@ -13,12 +13,13 @@ class MainWindow(QMainWindow):
         self.setup_clients()
         self.connect_signals()
 
+        self.force_sync()
+
     def setup_ui(self):
         self.setWindowTitle("Visitor Management Client")
         self.setMinimumSize(800,600)
         self.setGeometry(100, 100, 800, 600)
         
-        # Widgets
         self.log = QTextEdit()
         self.log.setReadOnly(True)
         
@@ -26,7 +27,6 @@ class MainWindow(QMainWindow):
         self.search_button = QPushButton("Search Visitors")
         self.sync_button = QPushButton("Force Sync")
         
-        # Layout
         layout = QVBoxLayout()
         layout.addWidget(self.log)
         layout.addWidget(QLabel("Search Visitors:"))
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         if "sync" in message.lower():
             self.api_client.response_received.disconnect()
             self.api_client.response_received.connect(self.handle_get_visitors)
-            self.api_client.get_visitors()
+            self.api_client.get_visitors_inside()
 
     def handle_api_response(self, response: dict):
         self.log.append("API Response:")
@@ -71,17 +71,15 @@ class MainWindow(QMainWindow):
 
     def force_sync(self):
         self.log.append("Manual sync initiated...")
-        self.api_client.get_visitors()
+        self.api_client.get_visitors_inside()
 
     def open_search_dialog(self):
         dialog = SearchDialog()
         dialog.exec()
     
     def handle_get_visitors(self, results):
-        print(f"{type(results)} ---------------------------------------")
-        print(str(results))
-        # if results and "visitors" in results:
-        #     for visitor in results["visitors"]:
-        #         self.log.append(f"Visitor: {visitor['name']} (ID: {visitor['visitorid']})")
-        # else:
-        #     self.log.append("No visitors found in the response.")
+        if results and isinstance(results, list):
+            for visitor in results:
+                self.log.append(f"Visitor: {visitor['name']} (ID: {visitor['visitorid']})")
+        else:
+            self.log.append("No visitors found in the response.")
