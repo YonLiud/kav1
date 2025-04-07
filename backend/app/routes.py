@@ -1,4 +1,3 @@
-# routes.py
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 from typing import List
@@ -18,7 +17,7 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             print(f"📨 Received: {data}")
-            await websocket.send_text("Message Received: " + data)
+            await ws_manager.send_personal_message(data, websocket)
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)
         print("❌ Client disconnected")
@@ -30,8 +29,8 @@ def get_visitors(db: Session = Depends(database.get_db)):
     return crud.get_visitors_inside(db)
 
 @router.post("/visitor")
-def add_visitor(name: str, visitorid: str, inside: bool, properties: dict, db: Session = Depends(database.get_db)):
-    return crud.create_visitor(db=db, name=name, visitorid=visitorid, inside=inside, properties=properties)
+def add_visitor(name: str, visitorid: str, properties: dict, db: Session = Depends(database.get_db)):
+    return crud.create_visitor(db=db, name=name, visitorid=visitorid, properties=properties)
 
 @router.get("/visitors/search")
 def search_visitors(search_query: str, db: Session = Depends(database.get_db)):
@@ -48,3 +47,17 @@ def get_visitor(visitor_id: str, db: Session = Depends(database.get_db)):
         return {"visitor": visitor}
     else:
         return {"message": "Visitor not found"}
+
+@router.post("/visitors/{visitor_id}/status")
+async def change_status(visitor_id: str, is_inside: bool, db: Session = Depends(database.get_db)):
+    visitor = crud.update_visitor_status(db, visitor_id, is_inside)
+    
+    if not visitor:
+        return {"message": "Visitor not found"}
+
+    try:
+        await ws_manager.broadcast("sync")
+    except Exception as e:
+        print(f"Broadcast failed: {e}")
+
+    return {"visitor": visitor}

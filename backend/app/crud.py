@@ -1,7 +1,5 @@
 from sqlalchemy.orm import Session
 from . import models
-from sqlalchemy import or_
-
 
 def get_visitors_inside(db: Session):
     return db.query(models.Visitor).filter(models.Visitor.inside == True).all()
