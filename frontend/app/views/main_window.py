@@ -44,16 +44,14 @@ class MainWindow(QMainWindow):
         self.ws_client.connect(Settings.get_ws_url())
 
     def connect_signals(self):
-        # WebSocket signals
+        self.api_client.response_received.disconnect()
         self.ws_client.message_received.connect(self.handle_ws_message)
         self.ws_client.connected.connect(lambda: self.log.append("WebSocket Connected"))
         self.ws_client.disconnected.connect(lambda: self.log.append("WebSocket Disconnected"))
         
-        # API signals
         self.api_client.response_received.connect(self.handle_api_response)
         self.api_client.error_occurred.connect(self.log_error)
         
-        # Button signals
         self.search_button.clicked.connect(self.open_search_dialog)
         self.sync_button.clicked.connect(self.force_sync)
 
@@ -68,11 +66,6 @@ class MainWindow(QMainWindow):
 
     def log_error(self, error: str):
         self.log.append(f"Error: {error}")
-
-    # def search_visitors(self):
-    #     query = self.search_input.text()
-    #     if query:
-    #         self.api_client.search_visitors(query)
 
     def force_sync(self):
         self.log.append("Manual sync initiated...")

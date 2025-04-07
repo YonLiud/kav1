@@ -10,7 +10,7 @@ class SearchDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Search Visitors")
 
-        self.api_client = ApiClient.get_instance()  # Use get_instance to fetch the singleton
+        self.api_client = ApiClient.get_instance()
 
         self.layout = QVBoxLayout(self)
 
@@ -31,15 +31,15 @@ class SearchDialog(QDialog):
         self.search_button.clicked.connect(self.search_visitors)
         self.layout.addWidget(self.search_button)
 
-        
-
     def search_visitors(self):
         query = self.search_input.text()
         if query:
             if self.search_by_name.isChecked():
+                self.api_client.response_received.disconnect()
                 self.api_client.response_received.connect(self.handle_search_results)
                 self.api_client.search_visitors(query)
             elif self.search_by_id.isChecked():
+                self.api_client.response_received.disconnect()
                 self.api_client.response_received.connect(self.handle_search_by_id_results)
                 self.api_client.get_visitor_by_id(query)
 
