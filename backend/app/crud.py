@@ -22,7 +22,7 @@ def update_visitor_status(db: Session, visitor_id: str, is_inside: bool):
     return None
 
 def get_visitor_by_id(db: Session, visitor_id: str):
-    return db.query(models.Visitor).filter(models.Visitor.visitor_id == visitor_id).first()
+    return db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
 
 def search_visitors_by_name(db: Session, search_query: str):
     return db.query(models.Visitor).filter(models.Visitor.name.ilike(f"%{search_query}%")).all()
