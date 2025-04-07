@@ -46,9 +46,8 @@ class ApiClient(QObject):
         self._send_request(url, "GET")
 
     def update_visitor_status(self, visitor_id: str, is_inside: bool):
-        url = Settings.get_http_url(f"/visitors/{visitor_id}/status")
-        data = {"is_inside": is_inside}
-        self._send_request(url, "POST", data)
+        url = Settings.get_http_url(f"/visitors/{visitor_id}/status?is_inside={is_inside}")
+        self._send_request(url, "POST")
 
     def _send_request(self, url: str, method: str, data: dict = None):
         request = QNetworkRequest(QUrl(url))

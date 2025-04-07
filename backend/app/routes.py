@@ -66,3 +66,4 @@ async def change_status(visitor_id: str, is_inside: bool, db: Session = Depends(
         print(f"Broadcast failed: {e}")
 
     return {"visitor": visitor}
+

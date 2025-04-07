@@ -5,7 +5,7 @@ from app.views.main_window import MainWindow
 def main():
     app = QApplication(sys.argv)
 
-    app.setStyle("WindowsVista")
+    # app.setStyle("WindowsVista")
 
     window = MainWindow()
     window.show()
