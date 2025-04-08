@@ -2,8 +2,10 @@ from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QLineEdit, QRadioButton, QPushButton, QLabel, QMessageBox
 )
 from app.core.api_client import ApiClient
+
 from .search_result_dialog import SearchResultDialog
 from .visitor_details_dialog import VisitorDetailsDialog
+from .warning_dialog import show_warning
 
 class SearchDialog(QDialog):
     def __init__(self, parent=None):
@@ -61,17 +63,7 @@ class SearchDialog(QDialog):
             self.handle_no_result()
     
     def handle_no_result(self):
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
-        msg.setWindowTitle("No Results")
-        msg.setText("No matching results found.")
-        msg.setStandardButtons(QMessageBox.Ok)
-        msg.exec()
+        show_warning("No Results", "No matching results found.")
 
     def handle_empty_url(self):
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
-        msg.setWindowTitle("Empty Prompt")
-        msg.setText("Cannot search for nothing.")
-        msg.setStandardButtons(QMessageBox.Ok)
-        msg.exec()
+        show_warning("Empty Prompt", "Cannot search for nothing.")

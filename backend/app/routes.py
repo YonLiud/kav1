@@ -67,3 +67,6 @@ async def change_status(visitor_id: str, is_inside: bool, db: Session = Depends(
 
     return {"visitor": visitor}
 
+# @router.get("/visitors/schema")
+# async def get_schema(db: Session = Depends(database.get_db)):
+    

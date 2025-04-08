@@ -49,6 +49,10 @@ class ApiClient(QObject):
         url = Settings.get_http_url(f"/visitors/{visitor_id}/status?is_inside={is_inside}")
         self._send_request(url, "POST")
 
+    def create_visitor(self, visitor: dict):
+        url = Settings.get_http_url(f"/visitor")
+        self._send_request(url, "POST", visitor)
+
     def _send_request(self, url: str, method: str, data: dict = None):
         request = QNetworkRequest(QUrl(url))
         request.setHeader(QNetworkRequest.ContentTypeHeader, "application/json")

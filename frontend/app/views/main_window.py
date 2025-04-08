@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget, 
-                             QTextEdit, QLineEdit, QPushButton, QLabel,
-                             QListWidget, QHBoxLayout, QSizePolicy, QFrame, 
+                             QTextEdit, QPushButton, QLabel,
+                             QListWidget, QHBoxLayout, QStyle, 
                              QMessageBox, QApplication)
-from PySide6.QtCore import Qt
+import time
 from PySide6.QtGui import QFont
 
 from app.core.api_client import ApiClient
@@ -19,18 +19,19 @@ from .warning_dialog import show_warning
 from datetime import datetime
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, appName = "Kav 1"):
         super().__init__()
 
         self.ask_for_connection()
 
-        self.setup_ui()
+        self.setup_ui(appName)
         self.setup_clients()
         self.connect_signals()
+        
         self.force_sync()
 
-    def setup_ui(self):
-        self.setWindowTitle("Visitor Management Client")
+    def setup_ui(self, appName):
+        self.setWindowTitle(appName)
         self.setMinimumSize(800, 600)
         self.setGeometry(100, 100, 800, 600)
 
@@ -41,14 +42,14 @@ class MainWindow(QMainWindow):
 
         self.search_button = QPushButton("Search Visitors")
         self.search_button.setIcon(self.style().standardIcon(QStyle.SP_MessageBoxQuestion))
-        self.add_button = QPushButton("Add Visitor")
-        self.add_button.setIcon(self.style().standardIcon(QStyle.SP_TitleBarMenuButton))
+        self.create_button = QPushButton("Add Visitor")
+        self.create_button.setIcon(self.style().standardIcon(QStyle.SP_TitleBarMenuButton))
         self.sync_button = QPushButton("Force Sync")
         self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
         button_height = 40
         self.search_button.setFixedHeight(button_height)
         self.sync_button.setFixedHeight(button_height)
-        self.add_button.setFixedHeight(button_height)
+        self.create_button.setFixedHeight(button_height)
 
         font = QFont()
         font.setPointSize(13)
@@ -69,7 +70,7 @@ class MainWindow(QMainWindow):
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.sync_button)
         button_layout.addWidget(self.search_button)
-        button_layout.addWidget(self.add_button)
+        button_layout.addWidget(self.create_button)
 
         layout.addLayout(button_layout)
 
@@ -97,6 +98,7 @@ class MainWindow(QMainWindow):
 
         self.search_button.clicked.connect(self.open_search_dialog)
         self.sync_button.clicked.connect(self.force_sync)
+        self.create_button.clicked.connect(self.add_visitor_dialog)
 
     def handle_ws_message(self, message: str):
         self.write_to_log(message)
@@ -121,6 +123,10 @@ class MainWindow(QMainWindow):
 
     def open_search_dialog(self):
         dialog = SearchDialog()
+        dialog.exec()
+
+    def add_visitor_dialog(self):
+        dialog = CreateVisitorDialog()
         dialog.exec()
 
     def handle_get_visitors(self, response):
@@ -166,7 +172,7 @@ class MainWindow(QMainWindow):
                 Settings.set_url(address)
 
     def handle_connect(self):
-        msg = f"Connected to {Settings.get_base_url()}"
+        msg = f"Connected to <b>{Settings.get_base_url()}</b>"
         self.write_to_log(msg)
         self.ws_status_label.setText(msg)
 
