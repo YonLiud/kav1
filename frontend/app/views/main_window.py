@@ -12,6 +12,9 @@ from app.core.settings import Settings
 from .visitor_details_dialog import VisitorDetailsDialog
 from .connection_dialog import ConnectionDialog
 from .search_dialog import SearchDialog
+from .create_visitor_dialog import CreateVisitorDialog
+
+from .warning_dialog import show_warning
 
 from datetime import datetime
 
@@ -168,16 +171,10 @@ class MainWindow(QMainWindow):
         self.ws_status_label.setText(msg)
 
     def handle_disconnect(self):
-        self.write_to_log("Connection Lost")
-        self.ws_status_label.setText("WebSocket Disconnected")
-
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
-        msg.setWindowTitle("Connection Lost")
-        msg.setText("Please ensure your network is active and the server is accessible.")
-        msg.setStandardButtons(QMessageBox.Ok)
-        msg.exec()
-
+        message = "WS Connection Lost"
+        self.write_to_log(message)
+        self.ws_status_label.setText(message)
+        show_warning(message, "Please ensure your network is active and the server is accessible.")
         QApplication.quit()
 
     def write_to_log(self, message:str):
