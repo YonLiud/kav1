@@ -12,3 +12,7 @@ class Settings:
     @classmethod
     def set_url(cls, input: str):
         cls.URL = input
+
+    @classmethod
+    def get_base_url(cls):
+        return cls.URL

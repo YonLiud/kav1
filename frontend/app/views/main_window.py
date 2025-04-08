@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         self.log = QTextEdit()
         self.log.setReadOnly(True)
 
-        self.ws_status_label = QLabel("WebSocket Status: Disconnected")
+        self.ws_status_label = QLabel("Disconnected")
 
         self.search_button = QPushButton("Search Visitors")
         self.add_button = QPushButton("Add Visitor")
@@ -160,7 +160,7 @@ class MainWindow(QMainWindow):
                 Settings.set_url(address)
 
     def handle_connect(self):
-        msg = f"WebSocket Connected to {Settings.get_ws_url()}"
+        msg = f"Connected to {Settings.get_base_url()}"
         self.write_to_log(msg)
         self.ws_status_label.setText(msg)
 
