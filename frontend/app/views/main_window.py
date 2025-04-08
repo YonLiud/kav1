@@ -37,8 +37,11 @@ class MainWindow(QMainWindow):
         self.ws_status_label = QLabel("Disconnected")
 
         self.search_button = QPushButton("Search Visitors")
+        self.search_button.setIcon(self.style().standardIcon(QStyle.SP_MessageBoxQuestion))
         self.add_button = QPushButton("Add Visitor")
+        self.add_button.setIcon(self.style().standardIcon(QStyle.SP_TitleBarMenuButton))
         self.sync_button = QPushButton("Force Sync")
+        self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
         button_height = 40
         self.search_button.setFixedHeight(button_height)
         self.sync_button.setFixedHeight(button_height)
