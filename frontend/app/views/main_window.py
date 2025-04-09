@@ -179,7 +179,7 @@ class MainWindow(QMainWindow):
         self.ws_status_label.setText(msg)
 
     def handle_disconnect(self):
-        message = "WS Connection Lost"
+        message = "WebSocket Connection Lost"
         self.logger.write_to_log(message)
         self.ws_status_label.setText(message)
         show_warning(
