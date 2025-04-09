@@ -4,6 +4,7 @@ from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
 from .visitor_details_dialog import VisitorDetailsDialog
+from .warning_dialog import show_warning
 
 class SearchResultDialog(QDialog):
     def __init__(self,query, results, parent=None):
@@ -76,6 +77,14 @@ class SearchResultDialog(QDialog):
         if results and 'visitor' in results:
             visitor_details_dialog = VisitorDetailsDialog(results['visitor'], self)
             visitor_details_dialog.exec()
+        else:
+            show_warning(
+                "Visitor Not Found",
+                "The requested visitor could not be found\n"
+                "  Check the ID for typos\n"
+                "The visitor may have been deleted\n"
+                "Try refreshing the data"
+            )
 
     def on_item_clicked(self, item):
         """Handle item click event"""

@@ -63,7 +63,22 @@ class SearchDialog(QDialog):
             self.handle_no_result()
     
     def handle_no_result(self):
-        show_warning("No Results", "No matching results found.")
+        show_warning(
+            "Search Field Empty",
+            "Please enter a search term to continue.\n\n"
+            "You can search by:\n"
+            "• Visitor name\n"
+            "• Visitor ID\n"
+            "• Date or other properties"
+        )
 
     def handle_empty_url(self):
-        show_warning("Empty Prompt", "Cannot search for nothing.")
+        show_warning(
+            "No Matches Found",
+            "Your search didn't return any results.\n\n"
+            "Suggestions:\n"
+            "• Check your spelling\n"
+            "• Try a different search term\n"
+            "• Verify the visitor exists in the system\n"
+            "• Refresh the data if recently updated"
+        )

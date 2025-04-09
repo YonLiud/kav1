@@ -75,14 +75,28 @@ class CreateVisitorDialog(QDialog):
 
     def submit_data(self):
         if not self.confirm_checkbox.isChecked():
-            show_warning("Oops", "Please confirm before submitting.")
+            show_warning(
+                "Action Required",
+                "Please review and confirm your entries before submitting.\n\n"
+                "Double-check:\n"
+                "• All required fields are complete\n"
+                "• The information is accurate\n"
+                "• Any special instructions were followed"
+            )
             return
 
         name = self.name_field.text().strip()
         visitor_id = self.visitorid_field.text().strip()
 
         if not name or not visitor_id:
-            show_warning("Oops", "Name and Visitor ID are required.")
+            show_warning(
+                "Missing Information", 
+                "Both name and visitor ID are required to continue.\n\n"
+                "Please provide:\n"
+                "• Full visitor name\n"
+                "• Valid visitor ID\n"
+                "• Any other required details"
+            )
             return
 
         self.check_visitor_exist(visitor_id)
@@ -100,13 +114,25 @@ class CreateVisitorDialog(QDialog):
         if data.get('message') == 'Visitor not found':
             self.create_visitor()
         else:
-            show_warning("Visitor Exists", "ID is already taken, make sure your ID is written correctly")
+            show_warning(
+                "Duplicate Visitor ID",
+                "This ID is already in use. Please try a different ID.\n\n"
+                "Tips:\n"
+                "• Check for typos in the ID\n"
+                "• Search for the existing visitor if needed"
+            )
+
 
     def on_error(self, error_message):
         """
         Handle error if API call fails.
         """
-        show_warning("Error", "An error occurred: " + error_message)
+        show_warning(
+            "Operation Failed",
+            "An unexpected error occurred:\n\n"
+            f"• {error_message}\n\n"
+            "Please try again or contact support if the problem persists."
+        )
 
     def create_visitor(self):
         """

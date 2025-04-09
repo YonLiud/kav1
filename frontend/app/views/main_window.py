@@ -16,7 +16,6 @@ from .search_dialog import SearchDialog
 from .create_visitor_dialog import CreateVisitorDialog
 from .warning_dialog import show_warning
 from app.utils.log import Log
-from .logs_dialog import LogsDialog
 
 class MainWindow(QMainWindow):
     def __init__(self, appName = "Kav 1"):
@@ -48,15 +47,11 @@ class MainWindow(QMainWindow):
         self.create_button.setIcon(self.style().standardIcon(QStyle.SP_TitleBarMenuButton))
         self.sync_button = QPushButton("Force Sync")
         self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
-        self.logs_button = QPushButton("Logs")
-        self.logs_button.setIcon(self.style().standardIcon(QStyle.SP_FileDialogStart))
         
         button_height = 40
         self.search_button.setFixedHeight(button_height)
         self.sync_button.setFixedHeight(button_height)
         self.create_button.setFixedHeight(button_height)
-        self.logs_button.setFixedHeight(button_height)
-
 
         font = QFont()
         font.setPointSize(13)
@@ -78,8 +73,6 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(self.sync_button)
         button_layout.addWidget(self.search_button)
         button_layout.addWidget(self.create_button)
-        button_layout.addWidget(self.logs_button)
-
 
         layout.addLayout(button_layout)
 
@@ -108,7 +101,6 @@ class MainWindow(QMainWindow):
         self.search_button.clicked.connect(self.open_search_dialog)
         self.sync_button.clicked.connect(self.force_sync)
         self.create_button.clicked.connect(self.add_visitor_dialog)
-        self.logs_button.clicked.connect(self.show_logs_dialog)
 
     def handle_ws_message(self, message: str):
         self.logger.write_to_log(message)
@@ -190,9 +182,14 @@ class MainWindow(QMainWindow):
         message = "WS Connection Lost"
         self.logger.write_to_log(message)
         self.ws_status_label.setText(message)
-        show_warning(message, "Please ensure your network is active and the server is accessible.")
+        show_warning(
+            "Connection Error",
+            "Unable to connect to the server.\n\n"
+            "Please verify:\n"
+            "✓ Your network connection is active\n"
+            "✓ The server is running and accessible\n"
+            "✓ Firewall settings allow this connection\n\n"
+            "Technical details:\n"
+            f"• {message}"
+        )
         QApplication.quit()
-
-    def show_logs_dialog(self):
-        dialog = LogsDialog()
-        dialog.exec()
