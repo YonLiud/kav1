@@ -64,7 +64,7 @@ class ApiClient(QObject):
         self._send_request(url, "POST", visitor)
 
     def delete_visitor(self, visitor_id: str):
-        url = Settings.get_base_url(f"/visitors/{visitor_id}/delete")
+        url = Settings.get_http_url(f"/visitors/{visitor_id}/delete")
         ApiClient.logger.write_to_log(f"Sending DELETE request to {url} with visitor ID: {visitor_id}")
         self._send_request(url, "POST", {"visitor_id": visitor_id})
 

@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFrame, 
-                               QLineEdit, QSizePolicy, QScrollArea, QWidget, QPushButton, QStyle)
+                               QLineEdit, QSizePolicy, QScrollArea, QWidget, 
+                               QPushButton, QStyle, QMessageBox)
 from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
@@ -37,7 +38,7 @@ class VisitorDetailsDialog(QDialog):
         self.name_label = QLabel(f"<b>Name:</b> {visitor_data['name']}")
         self.visitorid_label = QLabel(f"<b>Visitor ID:</b> {visitor_data['visitorid']}")
         self.inside_label = QLabel(f"<b>Inside:</b> {visitor_data['inside']}")
-        
+
         header_layout.addWidget(self.name_label)
         header_layout.addWidget(self.visitorid_label)
         header_layout.addWidget(self.inside_label)
@@ -91,7 +92,13 @@ class VisitorDetailsDialog(QDialog):
         self.toggle_button.setIcon(self.style().standardIcon(QStyle.SP_VistaShield))
         self.toggle_button.clicked.connect(self.toggle_inside)
         self.layout.addWidget(self.toggle_button)
-        
+
+        # Delete button
+        self.delete_button = QPushButton("Delete Visitor")
+        self.delete_button.setMinimumHeight(button_height)
+        self.delete_button.clicked.connect(self.delete_visitor)
+        self.layout.addWidget(self.delete_button)
+
         self.layout.addStretch()
 
     def toggle_inside(self):
@@ -101,3 +108,15 @@ class VisitorDetailsDialog(QDialog):
         self.logger.write_to_log(f"{current_status} | {current_id}")
         self.api_client.update_visitor_status(current_id, new_status)
         self.accept()
+
+    def delete_visitor(self):
+        """Delete the visitor after confirmation by calling the API."""
+        reply = QMessageBox.question(self, 'Confirm Deletion',
+                                    "Are you sure you want to delete this visitor?",
+                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.logger.write_to_log(f"Deleting visitor with ID: {self.visitor_data['visitorid']}")
+            self.api_client.delete_visitor(visitor_id=self.visitor_data['visitorid'])
+            self.accept()
+        else:
+            pass
