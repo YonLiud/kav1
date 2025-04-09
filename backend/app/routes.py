@@ -67,6 +67,16 @@ async def change_status(visitor_id: str, is_inside: bool, db: Session = Depends(
 
     return {"visitor": visitor}
 
-# @router.get("/visitors/schema")
-# async def get_schema(db: Session = Depends(database.get_db)):
+@router.delete("/visitors/{visitor_id}")
+async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)):
+    visitor = crud.delete_visitor(db, visitor_id)
     
+    if not visitor:
+        return {"message": "Visitor not found"}
+    
+    try:
+        await ws_manager.broadcast("sync")
+    except Exception as e:
+        print(f"Broadcast failed: {e}")
+
+    return {"message": "Visitor deleted", "visitor": visitor}

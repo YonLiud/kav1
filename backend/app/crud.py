@@ -24,6 +24,15 @@ def update_visitor_status(db: Session, visitor_id: str, is_inside: bool):
         return visitor
     return None
 
+def delete_visitor(db: Session, visitor_id: str):
+    visitor = db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
+
+    if visitor:
+        db.delete(visitor)
+        db.commit()
+        return visitor
+    return None
+
 def get_visitor_by_id(db: Session, visitor_id: str):
     return db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
 
