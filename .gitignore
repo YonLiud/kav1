@@ -15,3 +15,8 @@ test*.*
 
 # VSCode files
 .vscode
+
+# Build files
+build
+dist
+*.exe
