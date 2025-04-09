@@ -11,7 +11,7 @@ def parse_args():
 
 def is_valid_ip(ip):
     try:
-        socket.inet_aton(ip)  # Check if IP is valid
+        socket.inet_aton(ip)
         return True
     except socket.error:
         return False
@@ -22,16 +22,10 @@ def is_valid_port(port):
 if __name__ == "__main__":
     try:
         args = parse_args()
-
-        # Validate host
         if not is_valid_ip(args.host):
             raise ValueError(f"Invalid IP address: {args.host}")
-
-        # Validate port
         if not is_valid_port(args.port):
             raise ValueError(f"Invalid port number: {args.port}. Port must be between 0 and 65535.")
-
-        # Run the server
         uvicorn.run(app, host=args.host, port=args.port)
     
     except ValueError as e:
