@@ -20,3 +20,6 @@ test*.*
 build
 dist
 *.exe
+
+# log files
+*.log

@@ -1,10 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, Path, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from . import crud, schemas, database, websocket
-router = APIRouter()
+from .visitor_logger import VisitorLogger
 
+
+router = APIRouter()
 ws_manager = websocket.WebSocketManager()
+visitor_logger = VisitorLogger()
 
 #? Websocket Routes
 
@@ -32,6 +37,12 @@ def get_visitors_inside(db: Session = Depends(database.get_db)):
 def add_visitor(visitor: schemas.VisitorCreate, db: Session = Depends(database.get_db)):
     db_visitor = crud.create_visitor(db=db, name=visitor.name, visitorid=visitor.visitorid, properties=visitor.properties)
     if db_visitor:
+        visitor_logger.log_event(
+            event_type="CREATE",
+            visitor_id=db_visitor.visitorid,
+            visitor_name=db_visitor.name,
+            additional_info=f"Properties: {db_visitor.properties}"
+        )
         return db_visitor
     else:
         raise HTTPException(status_code=400, detail="Failed to create visitor")
@@ -60,6 +71,14 @@ async def change_status(visitor_id: str, is_inside: bool, db: Session = Depends(
     if not visitor:
         return {"message": "Visitor not found"}
 
+    # Log the status change
+    event_type = "ENTRY" if is_inside else "EXIT"
+    visitor_logger.log_event(
+        event_type=event_type,
+        visitor_id=visitor.visitorid,
+        visitor_name=visitor.name
+    )
+    
     try:
         await ws_manager.broadcast("sync")
     except Exception as e:
@@ -74,9 +93,40 @@ async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)
     if not visitor:
         return {"message": "Visitor not found"}
     
+    visitor_logger.log_event(
+        event_type="DELETE",
+        visitor_id=visitor.visitorid,
+        visitor_name=visitor.name
+    )
+    
     try:
         await ws_manager.broadcast("sync")
     except Exception as e:
         print(f"Broadcast failed: {e}")
 
     return {"message": "Visitor deleted successfully", "visitor": visitor}
+
+@router.get("/visitors/log")
+async def get_visitor_logs(
+    date: Optional[str] = None,
+    max_entries: Optional[int] = 100
+):
+    """Get visitor log entries"""
+    return {"logs": visitor_logger.get_logs(date, max_entries)}
+
+@router.get("/visitors/log/download")
+async def download_visitor_log(
+    date: Optional[str] = None
+):
+    """Download visitor log file"""
+    date_str = date or datetime.now().strftime("%Y-%m-%d")
+    log_file = Path("visitor_logs") / f"visitors_{date_str}.log"
+    
+    if not log_file.exists():
+        raise HTTPException(status_code=404, detail="Log file not found")
+    
+    return FileResponse(
+        log_file,
+        media_type="text/plain",
+        filename=f"visitor_log_{date_str}.txt"
+    )
