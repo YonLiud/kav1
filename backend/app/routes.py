@@ -67,7 +67,7 @@ async def change_status(visitor_id: str, is_inside: bool, db: Session = Depends(
 
     return {"visitor": visitor}
 
-@router.delete("/visitors/{visitor_id}")
+@router.post("/visitors/{visitor_id}/delete")
 async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)):
     visitor = crud.delete_visitor(db, visitor_id)
     
@@ -79,4 +79,4 @@ async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)
     except Exception as e:
         print(f"Broadcast failed: {e}")
 
-    return {"message": "Visitor deleted", "visitor": visitor}
+    return {"message": "Visitor deleted successfully", "visitor": visitor}

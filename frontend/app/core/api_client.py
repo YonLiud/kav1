@@ -63,6 +63,12 @@ class ApiClient(QObject):
         ApiClient.logger.write_to_log(f"Sending POST request to {url} with visitor data: {visitor}")
         self._send_request(url, "POST", visitor)
 
+    def delete_visitor(self, visitor_id: str):
+        url = Settings.get_base_url(f"/visitors/{visitor_id}/delete")
+        ApiClient.logger.write_to_log(f"Sending DELETE request to {url} with visitor ID: {visitor_id}")
+        self._send_request(url, "POST", {"visitor_id": visitor_id})
+
+
     def _send_request(self, url: str, method: str, data: dict = None):
         request = QNetworkRequest(QUrl(url))
         request.setHeader(QNetworkRequest.ContentTypeHeader, "application/json")
