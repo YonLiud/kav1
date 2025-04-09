@@ -3,12 +3,14 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFrame,
 from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
+from app.utils.log import Log
 
 class VisitorDetailsDialog(QDialog):
     def __init__(self, visitor_data, parent=None):
         super().__init__(parent)
         
         self.api_client = ApiClient.get_instance()
+        self.logger = Log()
         
         self.visitor_data = visitor_data
 
@@ -19,7 +21,6 @@ class VisitorDetailsDialog(QDialog):
         self.layout.setContentsMargins(16, 16, 16, 16)
         self.layout.setSpacing(12)
         
-        # Header Frame
         self.header_frame = QFrame()
         self.header_frame.setFrameShape(QFrame.StyledPanel)
         header_layout = QVBoxLayout(self.header_frame)
@@ -81,8 +82,8 @@ class VisitorDetailsDialog(QDialog):
         self.layout.addWidget(self.properties_frame)
 
         isInside = self.visitor_data["inside"]
-        print(isInside)
-        print(type(isInside))
+        self.logger.write_to_log(isInside)
+        self.logger.write_to_log(type(isInside))
 
         self.toggle_button = QPushButton(f"Mark {'Outside' if isInside else 'Inside'}")
         button_height = 40
@@ -97,6 +98,6 @@ class VisitorDetailsDialog(QDialog):
         current_id = self.visitor_data['visitorid']
         current_status = self.visitor_data['inside']
         new_status = not current_status
-        print(f"{current_status} | {current_id}")
+        self.logger.write_to_log(f"{current_status} | {current_id}")
         self.api_client.update_visitor_status(current_id, new_status)
         self.accept()

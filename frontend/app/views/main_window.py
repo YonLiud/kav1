@@ -16,6 +16,8 @@ from .create_visitor_dialog import CreateVisitorDialog
 
 from .warning_dialog import show_warning
 
+from app.utils.log import Log
+
 from datetime import datetime
 
 class MainWindow(QMainWindow):
@@ -23,6 +25,8 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.ask_for_connection()
+
+        self.logger = Log()
 
         self.setup_ui(appName)
         self.setup_clients()
@@ -35,8 +39,8 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(800, 600)
         self.setGeometry(100, 100, 800, 600)
 
-        self.log = QTextEdit()
-        self.log.setReadOnly(True)
+        # self.log = QTextEdit()
+        # self.log.setReadOnly(True)
 
         self.ws_status_label = QLabel("Disconnected")
 
@@ -61,7 +65,7 @@ class MainWindow(QMainWindow):
 
         self.visitors_list.clicked.connect(self.on_visitor_clicked)
 
-        self.log.setStyleSheet("background-color: #1c1c1c; color: #dcdcdc;")
+        # self.log.setStyleSheet("background-color: #1c1c1c; color: #dcdcdc;")
 
         layout = QVBoxLayout()
 
@@ -76,7 +80,7 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(QLabel("Visitors Inside:"))
         layout.addWidget(self.visitors_list)
-        layout.addWidget(self.log)
+        # layout.addWidget(self.log)
 
         container = QWidget()
         container.setLayout(layout)
@@ -101,24 +105,24 @@ class MainWindow(QMainWindow):
         self.create_button.clicked.connect(self.add_visitor_dialog)
 
     def handle_ws_message(self, message: str):
-        self.write_to_log(message)
+        self.logger.write_to_log(message)
         if "sync" in message.lower():
             self.api_client.response_received.disconnect()
             self.api_client.response_received.connect(self.handle_get_visitors)
             self.api_client.get_visitors_inside()
 
     def handle_api_response(self, response: dict):
-        self.write_to_log("API Response:")
-        self.write_to_log(str(response))
+        self.logger.write_to_log("API Response:")
+        self.logger.write_to_log(str(response))
 
         if response and isinstance(response, list):
             self.update_visitors_list(response)
 
     def log_error(self, error: str):
-        self.write_to_log(f"Error: {error}")
+        self.logger.write_to_log(f"Error: {error}")
 
     def force_sync(self):
-        self.write_to_log("Manual sync initiated...")
+        self.logger.write_to_log("Manual sync initiated...")
         self.api_client.get_visitors_inside()
 
     def open_search_dialog(self):
@@ -131,7 +135,7 @@ class MainWindow(QMainWindow):
 
     def handle_get_visitors(self, response):
         if response and isinstance(response, list):
-            self.write_to_log(response)
+            self.logger.write_to_log(response)
             self.update_visitors_list(response)
         else:
             self.visitors_list.clear()
@@ -172,17 +176,13 @@ class MainWindow(QMainWindow):
                 Settings.set_url(address)
 
     def handle_connect(self):
-        msg = f"Connected to <b>{Settings.get_base_url()}</b>"
-        self.write_to_log(msg)
+        msg = f"Connected to {Settings.get_base_url()}"
+        self.logger.write_to_log(msg)
         self.ws_status_label.setText(msg)
 
     def handle_disconnect(self):
         message = "WS Connection Lost"
-        self.write_to_log(message)
+        self.logger.write_to_log(message)
         self.ws_status_label.setText(message)
         show_warning(message, "Please ensure your network is active and the server is accessible.")
         QApplication.quit()
-
-    def write_to_log(self, message:str):
-        now = datetime.now()
-        self.log.append(f"{now} - {message}")
