@@ -34,10 +34,10 @@ class VisitorLogger:
             additional_info: Any additional context
         """
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_entry = f"{timestamp} {event_type} {visitor_id} {visitor_name}"
+        log_entry = f"{timestamp},{event_type},{visitor_id},{visitor_name}"
         
         if additional_info:
-            log_entry += f" {additional_info}"
+            log_entry += f",{additional_info}"
         
         log_file = self._get_log_file()
         with open(log_file, "a") as f:
@@ -65,4 +65,4 @@ class VisitorLogger:
     
     def get_all_log_files(self):
         """Get list of all available log files"""
-        return sorted(Path(self._log_dir).glob("visitors_*.log"))
+        return sorted(Path(self._log_dir).glob("visitors_*.csv"))
