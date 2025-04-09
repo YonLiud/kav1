@@ -51,7 +51,8 @@ class CreateVisitorDialog(QDialog):
 
         self.param_fields = []
         self.add_param_field()
-
+        
+        self.api_client.response_received.disconnect()
         self.api_client.response_received.connect(self.on_visitor_found)
         self.api_client.error_occurred.connect(self.on_error)
 
