@@ -1,11 +1,12 @@
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, Path, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from pathlib import Path as Path
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from . import crud, schemas, database, websocket
 from .visitor_logger import VisitorLogger
-
+import zipfile
 
 router = APIRouter()
 ws_manager = websocket.WebSocketManager()
@@ -106,27 +107,58 @@ async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)
 
     return {"message": "Visitor deleted successfully", "visitor": visitor}
 
-@router.get("/visitors/log")
-async def get_visitor_logs(
-    date: Optional[str] = None,
-    max_entries: Optional[int] = 100
-):
-    """Get visitor log entries"""
-    return {"logs": visitor_logger.get_logs(date, max_entries)}
+@router.get("/visitors/logs/list")
+async def list_log_files():
+    """Returns all available log files"""
+    try:
+        log_dir = Path("visitor_logs")
+        
+        # Create directory if it doesn't exist
+        log_dir.mkdir(exist_ok=True)
+        
+        log_files = sorted(log_dir.glob("visitors_*.log"))
+        return {"logs": [f.name for f in log_files]}
+    except Exception as e:
+        raise HTTPException(500, detail=f"Failed to list logs: {str(e)}")
 
-@router.get("/visitors/log/download")
-async def download_visitor_log(
-    date: Optional[str] = None
-):
-    """Download visitor log file"""
-    date_str = date or datetime.now().strftime("%Y-%m-%d")
-    log_file = Path("visitor_logs") / f"visitors_{date_str}.log"
-    
-    if not log_file.exists():
-        raise HTTPException(status_code=404, detail="Log file not found")
-    
-    return FileResponse(
-        log_file,
-        media_type="text/plain",
-        filename=f"visitor_log_{date_str}.txt"
-    )
+@router.get("/visitors/logs/download/{log_name}")
+async def download_log(log_name: str):
+    """Downloads a specific log file"""
+    try:
+        log_path = Path("visitor_logs") / log_name
+        if not log_path.exists():
+            raise HTTPException(404, detail="Log file not found")
+        
+        # Security check: prevent directory traversal
+        if ".." in log_name or not log_name.startswith("visitors_"):
+            raise HTTPException(400, detail="Invalid log file name")
+            
+        return FileResponse(log_path)
+    except Exception as e:
+        raise HTTPException(500, detail=f"Download failed: {str(e)}")
+
+@router.get("/visitors/logs/download/all")
+async def download_all_logs():
+    """Downloads all logs as a ZIP archive"""
+    try:
+        log_dir = Path("visitor_logs")
+        if not log_dir.exists():
+            raise HTTPException(404, detail="No logs found")
+        
+        zip_path = "all_visitor_logs.zip"
+        with zipfile.ZipFile(zip_path, "w") as zipf:
+            for log_file in log_dir.glob("visitors_*.log"):
+                zipf.write(log_file, log_file.name)
+        
+        return FileResponse(
+            zip_path,
+            media_type="application/zip",
+            filename="all_visitor_logs.zip"
+        )
+    except Exception as e:
+        raise HTTPException(500, detail=f"Failed to create archive: {str(e)}")
+    finally:
+        # Clean up temporary zip file if it exists
+        temp_zip = Path("all_visitor_logs.zip")
+        if temp_zip.exists():
+            temp_zip.unlink()
