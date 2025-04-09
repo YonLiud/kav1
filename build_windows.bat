@@ -1,6 +1,6 @@
 cls
 cd frontend
-pyinstaller main.spec
+pyinstaller --noconfirm main.spec
 
 cd ..\backend
-pyinstaller server.spec
+pyinstaller --noconfirm server.spec
