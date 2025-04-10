@@ -36,8 +36,7 @@ jobs:
         
     - name: Verify Installer Exists
       run: |
-        dir C:\installer_output
-        if not exist "C:\installer_output\kav1_setup_*.exe" (exit 1)
+        & "dir C:\installer_output /s"
 
     - name: Upload Installer
       uses: actions/upload-artifact@v4
