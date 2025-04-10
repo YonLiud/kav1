@@ -116,6 +116,7 @@ class VisitorDetailsDialog(QDialog):
                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.logger.write_to_log(f"Deleting visitor with ID: {self.visitor_data['visitorid']}")
+            self.api_client.response_received.disconnect()
             self.api_client.delete_visitor(visitor_id=self.visitor_data['visitorid'])
             self.accept()
         else:

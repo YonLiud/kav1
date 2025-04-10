@@ -42,9 +42,9 @@ class MainWindow(QMainWindow):
         self.ws_status_label = QLabel("Disconnected")
 
         self.search_button = QPushButton("Search Visitors")
-        self.search_button.setIcon(self.style().standardIcon(QStyle.SP_MessageBoxQuestion))
+        self.search_button.setIcon(self.style().standardIcon(QStyle.SP_FileDialogContentsView))
         self.create_button = QPushButton("Add Visitor")
-        self.create_button.setIcon(self.style().standardIcon(QStyle.SP_TitleBarMenuButton))
+        self.create_button.setIcon(self.style().standardIcon(QStyle.SP_CommandLink))
         self.sync_button = QPushButton("Force Sync")
         self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
         

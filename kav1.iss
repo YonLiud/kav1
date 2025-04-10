@@ -15,5 +15,7 @@ Source: "frontend\dist\main\main.exe"; DestDir: "{app}\client"; Flags: ignorever
 Source: "frontend\dist\main\_internal\*"; DestDir: "{app}\client\_internal"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\Kav1 App"; Filename: "{app}client\main.exe"
+Name: "{group}\Kav1 App"; Filename: "{app}\client\main.exe"
 Name: "{group}\Kav1 Server"; Filename: "{app}\server\server.exe"
+Name: "{commondesktop}\Kav1 App"; Filename: "{app}\client\main.exe"
+Name: "{commondesktop}\Kav1 Server"; Filename: "{app}\server\server.exe"
