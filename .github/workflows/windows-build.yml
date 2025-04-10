@@ -30,7 +30,9 @@ jobs:
       run: choco install innosetup -y
 
     - name: Build Installer
-      run: '"C:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe" /Qp /O"C:\\installer_output" /F"kav1_setup_%GITHUB_REF_NAME%" kav1.iss'
+      run: |
+        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_%GITHUB_REF_NAME%" kav1.iss
+
 
     - name: Upload Installer
       uses: actions/upload-artifact@v4
