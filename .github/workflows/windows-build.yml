@@ -24,7 +24,7 @@ jobs:
         pip install pyinstaller
 
     - name: Build EXEs
-      run: build_windows.bat
+      run: .\build_windows.bat
 
     - name: Install Inno Setup
       run: choco install innosetup
