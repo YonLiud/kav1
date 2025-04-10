@@ -7,7 +7,6 @@ a = Analysis(
     binaries=[],
     datas=[
         ('app\\*.py', 'app'),
-        ('local_database.db', '.'),
     ],
     hiddenimports=[],
     hookspath=[],
