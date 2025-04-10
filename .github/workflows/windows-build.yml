@@ -31,11 +31,16 @@ jobs:
 
     - name: Build Installer
       run: |
+        mkdir C:\installer_output
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_%GITHUB_REF_NAME%" kav1.iss
-
+        
+    - name: Verify Installer Exists
+      run: |
+        dir C:\installer_output
+        if not exist "C:\installer_output\kav1_setup_*.exe" (exit 1)
 
     - name: Upload Installer
       uses: actions/upload-artifact@v4
       with:
         name: kav1_installer
-        path: installer_output\kav1_setup_*.exe
+        path: C:\installer_output\kav1_setup_*.exe
