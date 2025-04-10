@@ -36,7 +36,7 @@ jobs:
         
     - name: Verify Installer Exists
       run: |
-        & "dir C:\installer_output /s"
+        & "Get-ChildItem C:\installer_output -Recurse"
 
     - name: Upload Installer
       uses: actions/upload-artifact@v4
