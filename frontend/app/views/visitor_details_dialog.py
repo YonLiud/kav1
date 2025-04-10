@@ -83,9 +83,6 @@ class VisitorDetailsDialog(QDialog):
         self.layout.addWidget(self.properties_frame)
 
         isInside = self.visitor_data["inside"]
-        self.logger.write_to_log(isInside)
-        self.logger.write_to_log(type(isInside))
-
         self.toggle_button = QPushButton(f"Mark {'Outside' if isInside else 'Inside'}")
         button_height = 40
         self.toggle_button.setMinimumHeight(button_height)
