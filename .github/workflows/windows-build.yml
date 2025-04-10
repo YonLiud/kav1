@@ -27,13 +27,18 @@ jobs:
       run: .\build_windows.bat
 
     - name: Install Inno Setup
-      run: choco install innosetup
+      run: choco install innosetup -y
 
     - name: Build Installer
-      run: '"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" kav1.iss'
+      run: |
+        "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" ^
+          /Qp ^
+          /O"installer_output" ^
+          /Fkav1_setup_%GITHUB_REF_NAME% ^
+          kav1.iss
 
     - name: Upload Installer
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3.1.3
       with:
         name: kav1_installer
-        path: kav1_setup.exe
+        path: installer_output\kav1_setup_*.exe
