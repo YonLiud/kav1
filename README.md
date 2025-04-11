@@ -105,7 +105,7 @@ To build the program and the installer for it:
 
 2. Build the installer using Inno Setup
 ```bash
-"ISCC.exe kav1.iss
+ISCC.exe kav1.iss
 ```
 
 ## License
