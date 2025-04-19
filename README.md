@@ -2,6 +2,11 @@
 
 Kav1 is a visitor management system with a PySide6 frontend and FastAPI backend. It offers real-time updates via WebSocket and a user-friendly interface for managing visitor data.
 
+## Demo 
+
+### Usage across local network
+https://github.com/user-attachments/assets/97202b2d-16db-4b5f-9997-2ca17d9c08f9
+
 ## Features
 
 ### Frontend
