@@ -7,6 +7,7 @@ OutputDir=setup
 OutputBaseFilename=kav1_setup
 Compression=lzma
 SolidCompression=yes
+DefaultGroupName=Kav1
 
 [Files]
 Source: "backend\dist\server\server.exe"; DestDir: "{app}\server"; Flags: ignoreversion

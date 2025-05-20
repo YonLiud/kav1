@@ -1,12 +1,9 @@
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from pathlib import Path as Path
-from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from typing import List, Optional
 from . import crud, schemas, database, websocket
 from .visitor_logger import VisitorLogger
-import zipfile
 
 router = APIRouter()
 ws_manager = websocket.WebSocketManager()
