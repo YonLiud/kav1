@@ -26,6 +26,7 @@ exe = EXE(
     name='server',
     debug=False,
     bootloader_ignore_signals=False,
+    icon='kav1servericon.png',
     strip=False,
     upx=True,
     console=True,
