@@ -19,8 +19,8 @@ Source: "frontend\dist\main\_internal\*"; DestDir: "{app}\client\_internal"; Fla
 [Icons]
 Name: "{group}\Kav1 App"; Filename: "{app}\client\main.exe"
 Name: "{group}\Kav1 Server"; Filename: "{app}\server\server.exe"
-Name: "{commondesktop}\Kav1 App"; Filename: "{app}\client\main.exe"
-Name: "{commondesktop}\Kav1 Server"; Filename: "{app}\server\server.exe"
+Name: "{userdesktop}\Kav1 App"; Filename: "{app}\client\main.exe"
+Name: "{userdesktop}\Kav1 Server"; Filename: "{app}\server\server.exe"
 
 [Code]
 procedure InitializeWizard;
