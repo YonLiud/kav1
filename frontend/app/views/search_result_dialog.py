@@ -80,10 +80,10 @@ class SearchResultDialog(QDialog):
         else:
             show_warning(
                 "Visitor Not Found",
-                "The requested visitor could not be found\n"
-                "  Check the ID for typos\n"
-                "The visitor may have been deleted\n"
-                "Try refreshing the data"
+                "The requested visitor could not be found.\n"
+                "The visitor may have been deleted.\n"
+                "Check the ID for typos.\n"
+                "Try force syncing."
             )
 
     def on_item_clicked(self, item):

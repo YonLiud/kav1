@@ -90,7 +90,6 @@ class VisitorDetailsDialog(QDialog):
         self.toggle_button.clicked.connect(self.toggle_inside)
         self.layout.addWidget(self.toggle_button)
 
-        # Delete button
         self.delete_button = QPushButton("Delete Visitor")
         self.delete_button.setMinimumHeight(button_height)
         self.delete_button.clicked.connect(self.delete_visitor)
