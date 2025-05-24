@@ -24,7 +24,7 @@ exe = EXE(
     [],
     exclude_binaries=True,
     name='main',
-    icon='kav1appicon.ico',
+    icon='clienticon.ico',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
