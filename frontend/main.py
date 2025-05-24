@@ -7,7 +7,6 @@ sys.argv += ['-platform', 'windows:darkmode=2']
 def main():
     app = QApplication(sys.argv)
     window = MainWindow()
-    print("src: https://github.com/YonLiud/kav1/")
     window.show()
     sys.exit(app.exec())
 
