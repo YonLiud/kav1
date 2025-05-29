@@ -14,7 +14,7 @@ from PySide6.QtGui import QFont
 from app.core.api_client import ApiClient
 from app.core.ws_client import WebSocketClient
 from app.core.settings import Settings
-from app.core.version import get_version
+from app.core.version import get_git_version
 
 from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
 from app.views.visitor.create_visitor_dialog import CreateVisitorDialog
@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
         # self.log.setReadOnly(True)
 
         self.ws_status_label = QLabel("Disconnected")
-        self.client_version = QLabel(f"Version Hash: {get_version()}")
+        self.client_version = QLabel(f"Version Hash: {get_git_version()}")
 
         self.search_button = QPushButton("Search Visitors")
         self.search_button.setIcon(

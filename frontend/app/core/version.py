@@ -1,14 +1,19 @@
+import subprocess
 import os
 
 
-def get_version():
+def get_git_version():
     try:
-        with open("version.txt", "r") as f:
-            sha = f.read().strip()
-    except (OSError, IOError):
-        sha = "unknown"
-    "unknown"
+        # First try to get version from file (for PyInstaller bundled version)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        version_file = os.path.join(dir_path, 'version.txt')
+        if os.path.exists(version_file):
+            with open(version_file, 'r') as f:
+                return f.read().strip()
 
-    if os.getenv("RELEASE_BUILD") == "true":
-        return sha
-    return f"unreleased-{sha}"
+        # If file doesn't exist or is empty, try to get directly from git
+        git_hash = subprocess.check_output(
+            ['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
+        return git_hash
+    except Exception:
+        return "unknown-version"

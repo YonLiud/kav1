@@ -1,6 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
     ['main.py'],
     pathex=[],
@@ -13,6 +12,7 @@ a = Analysis(
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
+    datas=[('version.txt', '.')],
     noarchive=False,
     optimize=0,
 )
