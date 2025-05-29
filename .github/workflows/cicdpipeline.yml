@@ -31,6 +31,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     
     - uses: actions/setup-python@v4
       with:
@@ -38,6 +40,9 @@ jobs:
     
     - run: |
         $sha = git rev-parse --short HEAD
+        if (-not $sha) {
+          $sha = "unknown-version"
+        }
         echo "SHORT_SHA=$sha" >> $env:GITHUB_ENV
         echo $sha > frontend/version.txt
         echo $sha > backend/version.txt
