@@ -5,9 +5,7 @@ from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
 
-from .warning_dialog import show_warning
-
-from PySide6.QtWidgets import QMessageBox
+from app.views.common.warning_dialog import show_warning 
 
 class CreateVisitorDialog(QDialog):
     def __init__(self):

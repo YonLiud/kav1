@@ -3,8 +3,8 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QListWidget, QLabel,
 from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
-from .visitor_details_dialog import VisitorDetailsDialog
-from .warning_dialog import show_warning
+from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
+from app.views.common.warning_dialog import show_warning
 
 class SearchResultDialog(QDialog):
     def __init__(self,query, results, parent=None):
