@@ -14,6 +14,7 @@ from PySide6.QtGui import QFont
 from app.core.api_client import ApiClient
 from app.core.ws_client import WebSocketClient
 from app.core.settings import Settings
+
 # from app.core.version import get_version
 
 from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
