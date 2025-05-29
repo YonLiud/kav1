@@ -66,16 +66,15 @@ jobs:
         $sha = git rev-parse --short HEAD
         if (-not $sha) { $sha = "${{ github.sha }}".Substring(0,7) }
         echo "SHORT_SHA=$sha" >> $env:GITHUB_ENV
-        echo "VERSION=$sha" >> $env:GITHUB_ENV  # For PyInstaller
         
         # Build frontend
         cd frontend
-        pyinstaller --noconfirm --version-file=$env:VERSION main.spec
+        pyinstaller --noconfirm main.spec
         cd ..
         
         # Build backend
         cd backend
-        pyinstaller --noconfirm --version-file=$env:VERSION server.spec
+        pyinstaller --noconfirm server.spec
         cd ..
     
     - run: choco install innosetup -y
