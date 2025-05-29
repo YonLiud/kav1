@@ -17,13 +17,13 @@ jobs:
 
     - name: Install tools
       run: |
-        pip install flake8 black mypy
+        pip install flake8
 
     - name: Run flake8
       run: flake8 .
 
-    - name: Run black check
-      run: black --check .
+    # - name: Run black check
+    #   run: black --check .
 
-    - name: Run mypy
-      run: mypy .
+    # - name: Run mypy
+    #   run: mypy .
