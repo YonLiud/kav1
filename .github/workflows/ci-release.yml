@@ -22,10 +22,10 @@ jobs:
       run: |
         echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
         if [[ "$GITHUB_REF_NAME" == "main" ]]; then
-          echo "BRANCH_SUFFIX=_main" >> $GITHUB_ENV
+          echo "BRANCH_SUFFIX=main" >> $GITHUB_ENV
           echo "IS_PRERELEASE=false" >> $GITHUB_ENV
         else
-          echo "BRANCH_SUFFIX=_dev" >> $GITHUB_ENV
+          echo "BRANCH_SUFFIX=dev" >> $GITHUB_ENV
           echo "IS_PRERELEASE=true" >> $GITHUB_ENV
         fi
 
