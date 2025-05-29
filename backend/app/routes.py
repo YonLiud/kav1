@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect)
 from sqlalchemy.orm import Session
 from . import crud, schemas, database, websocket
 from .visitor_logger import VisitorLogger
@@ -35,7 +36,8 @@ def get_visitors_inside(db: Session = Depends(database.get_db)):
 
 
 @router.post("/visitor")
-def add_visitor(visitor: schemas.VisitorCreate, db: Session = Depends(database.get_db)):
+def add_visitor(visitor: schemas.VisitorCreate,
+                db: Session = Depends(database.get_db)):
     db_visitor = crud.create_visitor(
         db=db,
         name=visitor.name,
@@ -84,7 +86,9 @@ async def change_status(
     # Log the status change
     event_type = "ENTRY" if is_inside else "EXIT"
     visitor_logger.log_event(
-        event_type=event_type, visitor_id=visitor.visitorid, visitor_name=visitor.name
+        event_type=event_type,
+        visitor_id=visitor.visitorid,
+        visitor_name=visitor.name
     )
 
     try:
@@ -96,14 +100,17 @@ async def change_status(
 
 
 @router.post("/visitors/{visitor_id}/delete")
-async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)):
+async def delete_visitor(visitor_id: str,
+                         db: Session = Depends(database.get_db)):
     visitor = crud.delete_visitor(db, visitor_id)
 
     if not visitor:
         return {"message": "Visitor not found"}
 
     visitor_logger.log_event(
-        event_type="DELETE", visitor_id=visitor.visitorid, visitor_name=visitor.name
+        event_type="DELETE",
+        visitor_id=visitor.visitorid,
+        visitor_name=visitor.name
     )
 
     try:
