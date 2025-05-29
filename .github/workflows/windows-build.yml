@@ -22,9 +22,12 @@ jobs:
         python-version: '3.11'
 
     - name: Get short SHA
-      id: vars
       run: |
-        echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $env:GITHUB_ENV
+        $sha = git rev-parse --short HEAD
+        echo "SHORT_SHA=$sha" >> $env:GITHUB_ENV
+        echo $sha > frontend/version.txt
+        echo $sha > backend/version.txt
+        echo "RELEASE_BUILD=true" >> $env:GITHUB_ENV
 
     - name: Install dependencies
       run: |
@@ -41,14 +44,13 @@ jobs:
       run: |
         mkdir C:\installer_output
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}" kav1.iss
-    
+
     - name: Create tag
       run: |
         git config user.name "github-actions"
         git config user.email "actions@github.com"
         git tag -a "v${{ env.SHORT_SHA }}" -m "Tag for build ${{ env.SHORT_SHA }}"
         git push origin "v${{ env.SHORT_SHA }}"
-
 
     - name: Create Release
       id: create_release
