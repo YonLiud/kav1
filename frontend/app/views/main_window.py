@@ -56,11 +56,9 @@ class MainWindow(QMainWindow):
             self.style().standardIcon(QStyle.SP_FileDialogContentsView)
         )
         self.create_button = QPushButton("Add Visitor")
-        self.create_button.setIcon(self.style().standardIcon(
-            QStyle.SP_CommandLink))
+        self.create_button.setIcon(self.style().standardIcon(QStyle.SP_CommandLink))
         self.sync_button = QPushButton("Force Sync")
-        self.sync_button.setIcon(self.style().standardIcon(
-            QStyle.SP_BrowserReload))
+        self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
 
         button_height = 40
         self.search_button.setFixedHeight(button_height)
@@ -177,8 +175,7 @@ class MainWindow(QMainWindow):
     def handle_visitor_details(self, results):
         """Handle the visitor details response."""
         if results and "visitor" in results:
-            visitor_details_dialog = VisitorDetailsDialog(results["visitor"],
-                                                          self)
+            visitor_details_dialog = VisitorDetailsDialog(results["visitor"], self)
             visitor_details_dialog.exec()
 
     def ask_for_connection(self):

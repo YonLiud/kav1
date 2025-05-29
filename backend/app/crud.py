@@ -22,8 +22,7 @@ def create_visitor(db: Session, name: str, visitorid: str, properties: dict):
 
 def update_visitor_status(db: Session, visitor_id: str, is_inside: bool):
     visitor = (
-        db.query(models.Visitor).filter(
-            models.Visitor.visitorid == visitor_id).first()
+        db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
     )
 
     if visitor:
@@ -36,8 +35,7 @@ def update_visitor_status(db: Session, visitor_id: str, is_inside: bool):
 
 def delete_visitor(db: Session, visitor_id: str):
     visitor = (
-        db.query(models.Visitor).filter(
-            models.Visitor.visitorid == visitor_id).first()
+        db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
     )
 
     if visitor:
@@ -49,8 +47,7 @@ def delete_visitor(db: Session, visitor_id: str):
 
 def get_visitor_by_id(db: Session, visitor_id: str):
     return (
-        db.query(models.Visitor).filter(
-            models.Visitor.visitorid == visitor_id).first()
+        db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
     )
 
 

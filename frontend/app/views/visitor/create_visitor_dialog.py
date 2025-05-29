@@ -164,9 +164,7 @@ class CreateVisitorDialog(QDialog):
 
             properties[key] = val
 
-        data = {"name": name,
-                "visitorid": visitor_id,
-                "properties": properties}
+        data = {"name": name, "visitorid": visitor_id, "properties": properties}
 
         self.api_client.create_visitor(data)
         self.accept()

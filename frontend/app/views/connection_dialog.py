@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QLineEdit, QLabel, QPushButton)
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QLabel, QPushButton
 
 
 class ConnectionDialog(QDialog):

@@ -9,8 +9,7 @@ def parse_args():
         description="Run the server with custom IP and port."
     )
     parser.add_argument(
-        "--host", type=str, default="0.0.0.0",
-        help="IP address to bind the server to"
+        "--host", type=str, default="0.0.0.0", help="IP address to bind the server to"
     )
     parser.add_argument(
         "--port", type=int, default=3000, help="Port to bind the server to"

@@ -46,8 +46,7 @@ class ApiClient(QObject):
 
     def get_visitor_by_id(self, query: str):
         url = Settings.get_http_url(f"/visitors/{query}")
-        ApiClient.logger.write_to_log(
-            f"GET request to {url} with query: {query}")
+        ApiClient.logger.write_to_log(f"GET request to {url} with query: {query}")
         self._send_request(url, "GET")
 
     def search_visitors(self, query: str):
@@ -82,8 +81,7 @@ class ApiClient(QObject):
 
     def _send_request(self, url: str, method: str, data: dict = None):
         request = QNetworkRequest(QUrl(url))
-        request.setHeader(
-            QNetworkRequest.ContentTypeHeader, "application/json")
+        request.setHeader(QNetworkRequest.ContentTypeHeader, "application/json")
 
         if method == "GET":
             ApiClient.logger.write_to_log(f"GET request to {url}")
@@ -101,13 +99,11 @@ class ApiClient(QObject):
             raw_data = reply.readAll()
             ApiClient.logger.write_to_log(f"Response received: {raw_data}")
 
-            status_code = reply.attribute(
-                QNetworkRequest.HttpStatusCodeAttribute)
+            status_code = reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
             ApiClient.logger.write_to_log(f"HTTP Status Code: {status_code}")
 
             if status_code != 200:
-                ApiClient.logger.write_to_log(
-                    f"Error occurred: HTTP {status_code}")
+                ApiClient.logger.write_to_log(f"Error occurred: HTTP {status_code}")
                 self.error_occurred.emit(f"HTTP Error: {status_code}")
             else:
                 decoded_data = raw_data.data().decode("utf-8")
@@ -115,5 +111,4 @@ class ApiClient(QObject):
                 self.response_received.emit(data)
         finally:
             reply.deleteLater()
-            ApiClient.logger.write_to_log(
-                "Response handling complete, cleaned up.")
+            ApiClient.logger.write_to_log("Response handling complete, cleaned up.")
