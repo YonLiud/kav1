@@ -2,9 +2,6 @@
 
 import os
 
-# Get version from environment variable or use default
-version = os.getenv('VERSION', '0.0.0')
-
 a = Analysis(
     ['server.py'],
     pathex=[],
@@ -39,7 +36,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    version=version,  # Add version info here
 )
 coll = COLLECT(
     exe,
