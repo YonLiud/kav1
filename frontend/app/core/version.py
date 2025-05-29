@@ -1,19 +1,25 @@
 import sys
+import os
 
 def get_version():
-    if getattr(sys, 'frozen', False):  # Check if running as PyInstaller bundle
-        import PyInstaller.utils.win32.versioninfo
+    if getattr(sys, 'frozen', False):
+        # For PyInstaller builds
         try:
-            version_info = PyInstaller.utils.win32.versioninfo.GetFileVersionInfo(sys.executable)
-            return version_info['StringFileInfo']['ProductVersion']
+            if sys.platform == 'win32':
+                import PyInstaller.utils.win32.versioninfo
+                version_info = PyInstaller.utils.win32.versioninfo.GetFileVersionInfo(sys.executable)
+                return version_info['StringFileInfo']['ProductVersion']
+            else:
+                # Linux/Mac alternative
+                return os.getenv('VERSION', 'unknown')
         except:
-            pass
-    
-    # Fallback for non-PyInstaller runs (dev mode)
-    try:
-        import subprocess
-        return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
-    except:
-        return "unknown-version"
+            return os.getenv('VERSION', 'unknown')
+    else:
+        # For development mode
+        try:
+            with open('version.txt') as f:
+                return f.read().strip()
+        except:
+            return 'dev'
 
-print(f"App version: {get_version()}")
+print(f"Version: {get_version()}")

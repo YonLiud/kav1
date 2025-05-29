@@ -1,12 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+
+# Get version from environment variable or use default
+version = os.getenv('VERSION', '0.0.0')
+
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
     datas=[
         ('app\\**\\*.py', 'app'),
-        ('version.txt', '.')
+        ('version.txt', '.')  # Keep if you still need this file
     ],
     hiddenimports=[],
     hookspath=[],
@@ -35,6 +40,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    version=version,  # Add version info here
 )
 coll = COLLECT(
     exe,
