@@ -21,8 +21,8 @@ jobs:
       with:
         python-version: '3.11'
     
-    - run: pip install black
-    - run: black --check .
+    - run: pip install flake8
+    - run: flake8 .
 
   build:
     name: Build Installer
@@ -31,8 +31,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
     
     - uses: actions/setup-python@v4
       with:
@@ -40,9 +38,6 @@ jobs:
     
     - run: |
         $sha = git rev-parse --short HEAD
-        if (-not $sha) {
-          $sha = "unknown-version"
-        }
         echo "SHORT_SHA=$sha" >> $env:GITHUB_ENV
         echo $sha > frontend/version.txt
         echo $sha > backend/version.txt
@@ -60,12 +55,6 @@ jobs:
     - run: |
         pip install -r requirements.txt
         pip install pyinstaller
-    
-    - run: |
-        # Get the Git SHA (fallback to GitHub's SHA if needed)
-        $sha = git rev-parse --short HEAD
-        if (-not $sha) { $sha = "${{ github.sha }}".Substring(0,7) }
-        echo "SHORT_SHA=$sha" >> $env:GITHUB_ENV
         
         # Build frontend
         cd frontend
