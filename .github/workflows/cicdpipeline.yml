@@ -1,0 +1,119 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  lint:
+    name: Lint and Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - run: pip install flake8
+    - run: flake8 .
+
+  build:
+    name: Build Installer
+    needs: lint
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - run: |
+        $sha = git rev-parse --short HEAD
+        echo "SHORT_SHA=$sha" >> $env:GITHUB_ENV
+        echo $sha > frontend/version.txt
+        echo $sha > backend/version.txt
+        echo "RELEASE_BUILD=true" >> $env:GITHUB_ENV
+    
+    - run: |
+        if ("$env:GITHUB_REF_NAME" -eq "main") {
+          echo "BRANCH_SUFFIX=_main" >> $env:GITHUB_ENV
+          echo "IS_PRERELEASE=false" >> $env:GITHUB_ENV
+        } else {
+          echo "BRANCH_SUFFIX=_dev" >> $env:GITHUB_ENV
+          echo "IS_PRERELEASE=true" >> $env:GITHUB_ENV
+        }
+    
+    - run: |
+        pip install -r requirements.txt
+        pip install pyinstaller
+    
+    - run: .\build_windows.bat
+    
+    - run: choco install innosetup -y
+    
+    - run: |
+        mkdir C:\installer_output
+        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}" kav1.iss
+    
+    - uses: actions/upload-artifact@v4
+      with:
+        name: installer
+        path: C:/installer_output/kav1_setup_${{ env.SHORT_SHA }}.exe
+
+  release:
+    name: Create Release
+    needs: build
+    if: github.event_name == 'push'  # Only run on push, not pull_request
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: installer
+        path: ./output
+    
+    - name: Set tag and suffix
+      run: |
+        echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        if [[ "$GITHUB_REF_NAME" == "main" ]]; then
+          echo "BRANCH_SUFFIX=main" >> $GITHUB_ENV
+          echo "IS_PRERELEASE=false" >> $GITHUB_ENV
+        else
+          echo "BRANCH_SUFFIX=dev" >> $GITHUB_ENV
+          echo "IS_PRERELEASE=true" >> $GITHUB_ENV
+        fi
+    
+    - name: Create tag
+      run: |
+        git config user.name "github-actions"
+        git config user.email "actions@github.com"
+        git tag -a "${{ env.SHORT_SHA }}" -m "${{ env.SHORT_SHA }}"
+        git push origin "${{ env.SHORT_SHA }}"
+    
+    - id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.SHORT_SHA }}
+        release_name: ${{ env.BRANCH_SUFFIX }} Build ${{ env.SHORT_SHA }}
+        draft: false
+        prerelease: ${{ env.IS_PRERELEASE }}
+    
+    - uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./output/kav1_setup_${{ env.SHORT_SHA }}.exe
+        asset_name: kav1_setup_${{ env.SHORT_SHA }}.exe
+        asset_content_type: application/octet-stream
