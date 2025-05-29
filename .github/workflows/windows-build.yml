@@ -29,6 +29,14 @@ jobs:
         echo $sha > backend/version.txt
         echo "RELEASE_BUILD=true" >> $env:GITHUB_ENV
 
+    - name: Set branch suffix
+      run: |
+        if ("$env:GITHUB_REF_NAME" -eq "main") {
+          echo "BRANCH_SUFFIX=_MAIN" >> $env:GITHUB_ENV
+        } else {
+          echo "BRANCH_SUFFIX=_DEV" >> $env:GITHUB_ENV
+        }
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
@@ -43,7 +51,7 @@ jobs:
     - name: Build Installer
       run: |
         mkdir C:\installer_output
-        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}" kav1.iss
+                & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}${{ env.BRANCH_SUFFIX }}" kav1.iss
 
     - name: Create tag
       run: |
