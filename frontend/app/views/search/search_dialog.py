@@ -1,5 +1,10 @@
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QLineEdit, QRadioButton, QPushButton, QLabel
+    QDialog,
+    QVBoxLayout,
+    QLineEdit,
+    QRadioButton,
+    QPushButton,
+    QLabel,
 )
 from app.core.api_client import ApiClient
 
@@ -39,29 +44,30 @@ class SearchDialog(QDialog):
         if query:
             if self.search_by_name.isChecked():
                 self.api_client.response_received.disconnect()
-                self.api_client.response_received.connect(
-                    self.handle_search_results)
+                self.api_client.response_received.connect(self.handle_search_results)
                 self.api_client.search_visitors(query)
             elif self.search_by_id.isChecked():
                 self.api_client.response_received.disconnect()
                 self.api_client.response_received.connect(
-                    self.handle_search_by_id_results)
+                    self.handle_search_by_id_results
+                )
                 self.api_client.get_visitor_by_id(query)
         else:
             self.handle_empty_url()
 
     def handle_search_results(self, results):
-        if results and 'visitors' in results:
+        if results and "visitors" in results:
             search_result_dialog = SearchResultDialog(
-                self.search_input.text(), results['visitors'])
+                self.search_input.text(), results["visitors"]
+            )
             self.accept()
             search_result_dialog.exec()
         else:
             self.handle_no_result()
 
     def handle_search_by_id_results(self, results):
-        if results and 'visitor' in results:
-            visitor_details_dialog = VisitorDetailsDialog(results['visitor'])
+        if results and "visitor" in results:
+            visitor_details_dialog = VisitorDetailsDialog(results["visitor"])
             visitor_details_dialog.exec()
         else:
             self.handle_no_result()
@@ -73,7 +79,7 @@ class SearchDialog(QDialog):
             "You can search by:\n"
             "• Visitor name\n"
             "• Visitor ID\n"
-            "• Date or other properties"
+            "• Date or other properties",
         )
 
     def handle_empty_url(self):
@@ -84,5 +90,5 @@ class SearchDialog(QDialog):
             "• Check your spelling\n"
             "• Try a different search term\n"
             "• Verify the visitor exists in the system\n"
-            "• Refresh the data if recently updated"
+            "• Refresh the data if recently updated",
         )

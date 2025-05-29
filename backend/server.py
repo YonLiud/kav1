@@ -6,11 +6,14 @@ from app.main import app
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Run the server with custom IP and port.")
-    parser.add_argument('--host', type=str, default='0.0.0.0',
-                        help='IP address to bind the server to')
-    parser.add_argument('--port', type=int, default=3000,
-                        help='Port number to bind the server to')
+        description="Run the server with custom IP and port."
+    )
+    parser.add_argument(
+        "--host", type=str, default="0.0.0.0", help="IP address to bind the server to"
+    )
+    parser.add_argument(
+        "--port", type=int, default=3000, help="Port number to bind the server to"
+    )
     return parser.parse_args()
 
 
@@ -32,8 +35,7 @@ if __name__ == "__main__":
         if not is_valid_ip(args.host):
             raise ValueError(f"Invalid IP address: {args.host}")
         if not is_valid_port(args.port):
-            raise ValueError(
-                f"Invalid port: {args.port}. Must be between 0 and 65535.")
+            raise ValueError(f"Invalid port: {args.port}. Must be between 0 and 65535.")
         uvicorn.run(app, host=args.host, port=args.port)
 
     except ValueError as e:

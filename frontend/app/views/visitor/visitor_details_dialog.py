@@ -1,7 +1,17 @@
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFrame,
-                               QLineEdit, QSizePolicy, QScrollArea, QWidget,
-                               QPushButton, QStyle, QCheckBox,
-                               QDialogButtonBox)
+from PySide6.QtWidgets import (
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QFrame,
+    QLineEdit,
+    QSizePolicy,
+    QScrollArea,
+    QWidget,
+    QPushButton,
+    QStyle,
+    QCheckBox,
+    QDialogButtonBox,
+)
 from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
@@ -38,9 +48,7 @@ class VisitorDetailsDialog(QDialog):
         header_layout.addWidget(self.title_label)
 
         self.name_label = QLabel(f"<b>Name:</b> {visitor_data['name']}")
-        self.visitorid_label = QLabel(
-            f"<b>Visitor ID:</b> {visitor_data['visitorid']}"
-        )
+        self.visitorid_label = QLabel(f"<b>Visitor ID:</b> {visitor_data['visitorid']}")
         self.inside_label = QLabel(f"<b>Inside:</b> {visitor_data['inside']}")
 
         header_layout.addWidget(self.name_label)
@@ -58,7 +66,7 @@ class VisitorDetailsDialog(QDialog):
         self.properties_title.setFont(title_font)
         properties_layout.addWidget(self.properties_title)
 
-        properties = visitor_data.get('properties', {})
+        properties = visitor_data.get("properties", {})
         if properties:
             scroll = QScrollArea()
             scroll.setWidgetResizable(True)
@@ -72,10 +80,7 @@ class VisitorDetailsDialog(QDialog):
                 line_edit.setText(f"{key}: {value}")
                 line_edit.setAlignment(Qt.AlignLeft)
                 line_edit.setReadOnly(True)
-                line_edit.setSizePolicy(
-                    QSizePolicy.Expanding,
-                    QSizePolicy.Fixed
-                )
+                line_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
                 line_edit.adjustSize()
 
                 scroll_layout.addWidget(line_edit)
@@ -90,14 +95,10 @@ class VisitorDetailsDialog(QDialog):
         self.layout.addWidget(self.properties_frame)
 
         isInside = self.visitor_data["inside"]
-        self.toggle_button = QPushButton(
-            f"Mark {'Outside' if isInside else 'Inside'}"
-        )
+        self.toggle_button = QPushButton(f"Mark {'Outside' if isInside else 'Inside'}")
         button_height = 40
         self.toggle_button.setMinimumHeight(button_height)
-        self.toggle_button.setIcon(self.style().standardIcon(
-            QStyle.SP_VistaShield
-        ))
+        self.toggle_button.setIcon(self.style().standardIcon(QStyle.SP_VistaShield))
         self.toggle_button.clicked.connect(self.toggle_inside)
         self.layout.addWidget(self.toggle_button)
 
@@ -109,8 +110,8 @@ class VisitorDetailsDialog(QDialog):
         self.layout.addStretch()
 
     def toggle_inside(self):
-        current_id = self.visitor_data['visitorid']
-        current_status = self.visitor_data['inside']
+        current_id = self.visitor_data["visitorid"]
+        current_status = self.visitor_data["inside"]
         new_status = not current_status
         self.logger.write_to_log(f"{current_status} | {current_id}")
         self.api_client.update_visitor_status(current_id, new_status)
@@ -121,19 +122,13 @@ class VisitorDetailsDialog(QDialog):
         dialog = QDialog(self)
         dialog.setWindowTitle("Confirm Deletion")
 
-        label = QLabel(
-            f"Are you sure you want to delete {self.visitor_data['name']}?"
-        )
+        label = QLabel(f"Are you sure you want to delete {self.visitor_data['name']}?")
         checkbox = QCheckBox("I confirm I want to delete this visitor")
-        buttons = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
-        )
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         ok_button = buttons.button(QDialogButtonBox.Ok)
         ok_button.setEnabled(False)
 
-        checkbox.stateChanged.connect(
-            lambda state: ok_button.setEnabled(state == 2)
-        )
+        checkbox.stateChanged.connect(lambda state: ok_button.setEnabled(state == 2))
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
 
@@ -145,7 +140,5 @@ class VisitorDetailsDialog(QDialog):
 
         if dialog.exec() == QDialog.Accepted:
             self.api_client.response_received.disconnect()
-            self.api_client.delete_visitor(
-                visitor_id=self.visitor_data['visitorid']
-            )
+            self.api_client.delete_visitor(visitor_id=self.visitor_data["visitorid"])
             self.accept()

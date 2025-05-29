@@ -12,7 +12,8 @@ def get_visitors_inside(db: Session):
 
 def create_visitor(db: Session, name: str, visitorid: str, properties: dict):
     db_visitor = models.Visitor(
-        name=name, visitorid=visitorid, inside=False, properties=properties)
+        name=name, visitorid=visitorid, inside=False, properties=properties
+    )
     db.add(db_visitor)
     db.commit()
     db.refresh(db_visitor)
@@ -20,8 +21,9 @@ def create_visitor(db: Session, name: str, visitorid: str, properties: dict):
 
 
 def update_visitor_status(db: Session, visitor_id: str, is_inside: bool):
-    visitor = db.query(models.Visitor).filter(
-        models.Visitor.visitorid == visitor_id).first()
+    visitor = (
+        db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
+    )
 
     if visitor:
         visitor.inside = is_inside
@@ -32,8 +34,9 @@ def update_visitor_status(db: Session, visitor_id: str, is_inside: bool):
 
 
 def delete_visitor(db: Session, visitor_id: str):
-    visitor = db.query(models.Visitor).filter(
-        models.Visitor.visitorid == visitor_id).first()
+    visitor = (
+        db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
+    )
 
     if visitor:
         db.delete(visitor)
@@ -43,10 +46,14 @@ def delete_visitor(db: Session, visitor_id: str):
 
 
 def get_visitor_by_id(db: Session, visitor_id: str):
-    return db.query(models.Visitor).filter(
-        models.Visitor.visitorid == visitor_id).first()
+    return (
+        db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
+    )
 
 
 def search_visitors_by_name(db: Session, search_query: str):
-    return db.query(models.Visitor).filter(
-        models.Visitor.name.ilike(f"%{search_query}%")).all()
+    return (
+        db.query(models.Visitor)
+        .filter(models.Visitor.name.ilike(f"%{search_query}%"))
+        .all()
+    )

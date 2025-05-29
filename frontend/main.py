@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QApplication
 from app.views.main_window import MainWindow
 
 
-sys.argv += ['-platform', 'windows:darkmode=2']
+sys.argv += ["-platform", "windows:darkmode=2"]
 
 
 def main():

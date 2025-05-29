@@ -23,7 +23,7 @@ class VisitorLogger:
         event_type: str,
         visitor_id: str,
         visitor_name: str,
-        additional_info: Optional[str] = None
+        additional_info: Optional[str] = None,
     ):
         """Log a visitor event
 
@@ -43,9 +43,7 @@ class VisitorLogger:
         with open(log_file, "a") as f:
             f.write(log_entry + "\n")
 
-    def get_logs(self,
-                 date: Optional[str] = None,
-                 max_entries: Optional[int] = None):
+    def get_logs(self, date: Optional[str] = None, max_entries: Optional[int] = None):
         """Get log entries
 
         Args:

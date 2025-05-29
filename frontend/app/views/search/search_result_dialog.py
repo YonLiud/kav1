@@ -1,6 +1,13 @@
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QListWidget, QLabel,
-    QPushButton, QSizePolicy, QSpacerItem, QFrame)
+    QDialog,
+    QVBoxLayout,
+    QListWidget,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QFrame,
+)
 from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
@@ -36,7 +43,8 @@ class SearchResultDialog(QDialog):
             self.layout.addWidget(self.no_results_label)
         else:
             self.results_count = QLabel(
-                f"Found <b>{len(results)}</b> visitor(s):", self)
+                f"Found <b>{len(results)}</b> visitor(s):", self
+            )
             self.layout.addWidget(self.results_count)
 
             self.results_list = QListWidget(self)
@@ -50,8 +58,9 @@ class SearchResultDialog(QDialog):
 
             self.results_list.itemClicked.connect(self.on_item_clicked)
 
-        self.layout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum,
-                                        QSizePolicy.Expanding))
+        self.layout.addItem(
+            QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        )
 
         self.layout.addWidget(self._create_horizontal_line())
 
@@ -74,14 +83,12 @@ class SearchResultDialog(QDialog):
 
     def search_details(self, visitorid: str):
         self.api_client.response_received.disconnect()
-        self.api_client.response_received.connect(
-            self.handle_search_details_result)
+        self.api_client.response_received.connect(self.handle_search_details_result)
         self.api_client.get_visitor_by_id(visitorid)
 
     def handle_search_details_result(self, results):
-        if results and 'visitor' in results:
-            visitor_details_dialog = VisitorDetailsDialog(results['visitor'],
-                                                          self)
+        if results and "visitor" in results:
+            visitor_details_dialog = VisitorDetailsDialog(results["visitor"], self)
             visitor_details_dialog.exec()
         else:
             show_warning(
@@ -89,10 +96,10 @@ class SearchResultDialog(QDialog):
                 "The requested visitor could not be found.\n"
                 "The visitor may have been deleted.\n"
                 "Check the ID for typos.\n"
-                "Try force syncing."
+                "Try force syncing.",
             )
 
     def on_item_clicked(self, item):
         """Handle item click event"""
-        visitorid = item.text().split(' - ')[0]
+        visitorid = item.text().split(" - ")[0]
         self.search_details(visitorid)

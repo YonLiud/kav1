@@ -2,12 +2,7 @@ from PySide6.QtWidgets import QMessageBox
 from PySide6.QtCore import Qt
 
 
-def show_warning(
-    message: str,
-    detail: str,
-    icon=QMessageBox.Warning,
-    parent=None
-):
+def show_warning(message: str, detail: str, icon=QMessageBox.Warning, parent=None):
     msg = QMessageBox(parent)
     msg.setIcon(icon)
     msg.setWindowTitle(message)
@@ -15,10 +10,10 @@ def show_warning(
     msg.setStandardButtons(QMessageBox.Ok)
 
     msg.setWindowFlags(
-        Qt.WindowStaysOnTopHint |
-        Qt.Dialog |
-        Qt.CustomizeWindowHint |
-        Qt.WindowTitleHint
+        Qt.WindowStaysOnTopHint
+        | Qt.Dialog
+        | Qt.CustomizeWindowHint
+        | Qt.WindowTitleHint
     )
     msg.setWindowModality(Qt.ApplicationModal)
 

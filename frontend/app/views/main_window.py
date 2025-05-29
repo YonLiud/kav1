@@ -1,7 +1,12 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QVBoxLayout, QWidget,
-    QPushButton, QLabel,
-    QListWidget, QHBoxLayout, QStyle,
+    QMainWindow,
+    QVBoxLayout,
+    QWidget,
+    QPushButton,
+    QLabel,
+    QListWidget,
+    QHBoxLayout,
+    QStyle,
     QApplication,
 )
 from PySide6.QtGui import QFont
@@ -15,6 +20,7 @@ from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
 from app.views.visitor.create_visitor_dialog import CreateVisitorDialog
 from .connection_dialog import ConnectionDialog
 from app.views.search.search_dialog import SearchDialog
+
 # from search.search_result_dialog import SearchResultDialog
 from app.views.common.warning_dialog import show_warning
 from app.utils.log import Log
@@ -46,14 +52,13 @@ class MainWindow(QMainWindow):
         self.client_version = QLabel(f"Version Hash: {get_version()}")
 
         self.search_button = QPushButton("Search Visitors")
-        self.search_button.setIcon(self.style().standardIcon(
-            QStyle.SP_FileDialogContentsView))
+        self.search_button.setIcon(
+            self.style().standardIcon(QStyle.SP_FileDialogContentsView)
+        )
         self.create_button = QPushButton("Add Visitor")
-        self.create_button.setIcon(self.style().standardIcon(
-            QStyle.SP_CommandLink))
+        self.create_button.setIcon(self.style().standardIcon(QStyle.SP_CommandLink))
         self.sync_button = QPushButton("Force Sync")
-        self.sync_button.setIcon(self.style().standardIcon(
-            QStyle.SP_BrowserReload))
+        self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
 
         button_height = 40
         self.search_button.setFixedHeight(button_height)
@@ -158,7 +163,7 @@ class MainWindow(QMainWindow):
         """Handle visitor item click."""
         selected_item = self.visitors_list.currentItem()
         if selected_item:
-            visitor_id = selected_item.text().split(' - ')[0]
+            visitor_id = selected_item.text().split(" - ")[0]
             self.show_visitor_details(visitor_id)
 
     def show_visitor_details(self, visitor_id):
@@ -169,9 +174,8 @@ class MainWindow(QMainWindow):
 
     def handle_visitor_details(self, results):
         """Handle the visitor details response."""
-        if results and 'visitor' in results:
-            visitor_details_dialog = VisitorDetailsDialog(results['visitor'],
-                                                          self)
+        if results and "visitor" in results:
+            visitor_details_dialog = VisitorDetailsDialog(results["visitor"], self)
             visitor_details_dialog.exec()
 
     def ask_for_connection(self):
@@ -199,6 +203,6 @@ class MainWindow(QMainWindow):
             "✓ The server is running and accessible\n"
             "✓ Firewall settings allow this connection\n\n"
             "Technical details:\n"
-            f"• {message}"
+            f"• {message}",
         )
         QApplication.quit()

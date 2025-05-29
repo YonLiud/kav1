@@ -1,7 +1,14 @@
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QLabel,
-    QScrollArea, QWidget, QPushButton,
-    QLineEdit, QCheckBox, QHBoxLayout)
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QScrollArea,
+    QWidget,
+    QPushButton,
+    QLineEdit,
+    QCheckBox,
+    QHBoxLayout,
+)
 
 from app.core.api_client import ApiClient
 
@@ -80,7 +87,7 @@ class CreateVisitorDialog(QDialog):
                 "Double-check:\n"
                 "• All required fields are complete\n"
                 "• The information is accurate\n"
-                "• Any special instructions were followed"
+                "• Any special instructions were followed",
             )
             return
 
@@ -94,7 +101,7 @@ class CreateVisitorDialog(QDialog):
                 "Please provide:\n"
                 "• Full visitor name\n"
                 "• Valid visitor ID\n"
-                "• Any other required details"
+                "• Any other required details",
             )
             return
 
@@ -110,7 +117,7 @@ class CreateVisitorDialog(QDialog):
         If the visitor is found, show a warning.
         If the visitor is not found, proceed to create the visitor.
         """
-        if data.get('message') == 'Visitor not found':
+        if data.get("message") == "Visitor not found":
             self.create_visitor()
         else:
             show_warning(
@@ -118,7 +125,7 @@ class CreateVisitorDialog(QDialog):
                 "This ID is already in use. Please try a different ID.\n\n"
                 "Tips:\n"
                 "• Check for typos in the ID\n"
-                "• Search for the existing visitor if needed"
+                "• Search for the existing visitor if needed",
             )
 
     def on_error(self, error_message):
@@ -129,7 +136,7 @@ class CreateVisitorDialog(QDialog):
             "Operation Failed",
             "An unexpected error occurred:\n\n"
             f"• {error_message}\n\n"
-            "Please try again or contact support if the problem persists."
+            "Please try again or contact support if the problem persists.",
         )
 
     def create_visitor(self):
@@ -157,11 +164,7 @@ class CreateVisitorDialog(QDialog):
 
             properties[key] = val
 
-        data = {
-            "name": name,
-            "visitorid": visitor_id,
-            "properties": properties
-        }
+        data = {"name": name, "visitorid": visitor_id, "properties": properties}
 
         self.api_client.create_visitor(data)
         self.accept()
