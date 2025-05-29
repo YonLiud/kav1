@@ -1,35 +1,32 @@
 name: Build Installer
 
 on:
+  push:
+    branches: [main, dev]
   workflow_run:
     workflows: ["Lint & Check"]
-    types:
-      - completed
+    types: [completed]
 
 jobs:
   build:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Install Python
-      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    - name: Get short SHA
-      run: |
+    - run: |
         $sha = git rev-parse --short HEAD
         echo "SHORT_SHA=$sha" >> $env:GITHUB_ENV
         echo $sha > frontend/version.txt
         echo $sha > backend/version.txt
         echo "RELEASE_BUILD=true" >> $env:GITHUB_ENV
 
-    - name: Set branch suffix and prerelease flag
-      run: |
+    - run: |
         if ("$env:GITHUB_REF_NAME" -eq "main") {
           echo "BRANCH_SUFFIX=_main" >> $env:GITHUB_ENV
           echo "IS_PRERELEASE=false" >> $env:GITHUB_ENV
@@ -38,24 +35,19 @@ jobs:
           echo "IS_PRERELEASE=true" >> $env:GITHUB_ENV
         }
 
-    - name: Install dependencies
-      run: |
+    - run: |
         pip install -r requirements.txt
         pip install pyinstaller
 
-    - name: Build EXEs
-      run: .\build_windows.bat
+    - run: .\build_windows.bat
 
-    - name: Install Inno Setup
-      run: choco install innosetup -y
+    - run: choco install innosetup -y
 
-    - name: Build Installer
-      run: |
+    - run: |
         mkdir C:\installer_output
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}" kav1.iss
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
         name: installer
         path: C:/installer_output/kav1_setup_${{ env.SHORT_SHA }}.exe
