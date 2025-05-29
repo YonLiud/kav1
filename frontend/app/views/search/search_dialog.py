@@ -44,7 +44,8 @@ class SearchDialog(QDialog):
         if query:
             if self.search_by_name.isChecked():
                 self.api_client.response_received.disconnect()
-                self.api_client.response_received.connect(self.handle_search_results)
+                self.api_client.response_received.connect(
+                    self.handle_search_results)
                 self.api_client.search_visitors(query)
             elif self.search_by_id.isChecked():
                 self.api_client.response_received.disconnect()

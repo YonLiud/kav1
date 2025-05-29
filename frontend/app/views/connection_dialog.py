@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QLabel, QPushButton
+from PySide6.QtWidgets import (
+    QDialog, QVBoxLayout, QLineEdit, QLabel, QPushButton)
 
 
 class ConnectionDialog(QDialog):
@@ -9,7 +10,7 @@ class ConnectionDialog(QDialog):
         self.setFixedSize(250, 100)
 
         self.input = QLineEdit()
-        self.input.setPlaceholderText("Enter server address (e.g., localhost:3000)")
+        self.input.setPlaceholderText("localhost:3000")
 
         self.confirm_button = QPushButton("Connect")
         self.confirm_button.clicked.connect(self.accept)

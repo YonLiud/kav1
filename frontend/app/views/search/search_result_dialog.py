@@ -83,12 +83,14 @@ class SearchResultDialog(QDialog):
 
     def search_details(self, visitorid: str):
         self.api_client.response_received.disconnect()
-        self.api_client.response_received.connect(self.handle_search_details_result)
+        self.api_client.response_received.connect(
+            self.handle_search_details_result)
         self.api_client.get_visitor_by_id(visitorid)
 
     def handle_search_details_result(self, results):
         if results and "visitor" in results:
-            visitor_details_dialog = VisitorDetailsDialog(results["visitor"], self)
+            visitor_details_dialog = VisitorDetailsDialog(results["visitor"],
+                                                          self)
             visitor_details_dialog.exec()
         else:
             show_warning(
