@@ -24,3 +24,6 @@ dist
 
 # log files
 *.log
+
+# version files
+version.txt

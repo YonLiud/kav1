@@ -9,6 +9,7 @@ from datetime import datetime
 from app.core.api_client import ApiClient
 from app.core.ws_client import WebSocketClient
 from app.core.settings import Settings
+from app.core.version import get_version
 
 from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
 from app.views.visitor.create_visitor_dialog import CreateVisitorDialog
@@ -41,6 +42,7 @@ class MainWindow(QMainWindow):
         # self.log.setReadOnly(True)
 
         self.ws_status_label = QLabel("Disconnected")
+        self.client_version = QLabel(f"Version Hash: {get_version()}")
 
         self.search_button = QPushButton("Search Visitors")
         self.search_button.setIcon(self.style().standardIcon(QStyle.SP_FileDialogContentsView))
@@ -69,6 +71,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
 
         layout.addWidget(self.ws_status_label)
+        layout.addWidget(self.client_version)
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.sync_button)
