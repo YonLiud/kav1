@@ -10,11 +10,12 @@ from app.core.api_client import ApiClient
 from app.core.ws_client import WebSocketClient
 from app.core.settings import Settings
 
-from .visitor_details_dialog import VisitorDetailsDialog
+from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
+from app.views.visitor.create_visitor_dialog import CreateVisitorDialog
 from .connection_dialog import ConnectionDialog
-from .search_dialog import SearchDialog
-from .create_visitor_dialog import CreateVisitorDialog
-from .warning_dialog import show_warning
+from app.views.search.search_dialog import SearchDialog
+# from search.search_result_dialog import SearchResultDialog
+from app.views.common.warning_dialog import show_warning
 from app.utils.log import Log
 
 class MainWindow(QMainWindow):

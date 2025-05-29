@@ -1,11 +1,11 @@
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QLineEdit, QRadioButton, QPushButton, QLabel, QMessageBox
+    QDialog, QVBoxLayout, QLineEdit, QRadioButton, QPushButton, QLabel
 )
 from app.core.api_client import ApiClient
 
 from .search_result_dialog import SearchResultDialog
-from .visitor_details_dialog import VisitorDetailsDialog
-from .warning_dialog import show_warning
+from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
+from app.views.common.warning_dialog import show_warning
 
 class SearchDialog(QDialog):
     def __init__(self, parent=None):

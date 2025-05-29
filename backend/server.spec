@@ -26,6 +26,7 @@ exe = EXE(
     name='server',
     debug=False,
     bootloader_ignore_signals=False,
+    icon='servericon.ico',
     strip=False,
     upx=True,
     console=True,

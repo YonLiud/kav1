@@ -1,11 +1,13 @@
 [Setup]
 AppName=Kav1 App
 AppVersion=1.0
-DefaultDirName={pf}\Kav1
-OutputDir=.
+DefaultDirName={userappdata}\Kav1
+PrivilegesRequired=lowest
+OutputDir=setup
 OutputBaseFilename=kav1_setup
 Compression=lzma
 SolidCompression=yes
+DefaultGroupName=Kav1
 
 [Files]
 Source: "backend\dist\server\server.exe"; DestDir: "{app}\server"; Flags: ignoreversion
@@ -17,5 +19,19 @@ Source: "frontend\dist\main\_internal\*"; DestDir: "{app}\client\_internal"; Fla
 [Icons]
 Name: "{group}\Kav1 App"; Filename: "{app}\client\main.exe"
 Name: "{group}\Kav1 Server"; Filename: "{app}\server\server.exe"
-Name: "{commondesktop}\Kav1 App"; Filename: "{app}\client\main.exe"
-Name: "{commondesktop}\Kav1 Server"; Filename: "{app}\server\server.exe"
+Name: "{userdesktop}\Kav1 App"; Filename: "{app}\client\main.exe"
+Name: "{userdesktop}\Kav1 Server"; Filename: "{app}\server\server.exe"
+
+[Code]
+procedure InitializeWizard;
+begin
+  WizardForm.ClientHeight := WizardForm.ClientHeight + 15;
+  with TLabel.Create(WizardForm) do
+  begin
+    Parent := WizardForm;
+    Top := WizardForm.ClientHeight - 18;
+    Left := 8;
+    Caption := 'Built by Yon Liud - https://github.com/YonLiud';
+    Font.Size := 7;
+  end;
+end;

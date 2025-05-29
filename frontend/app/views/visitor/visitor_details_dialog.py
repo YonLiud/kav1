@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFrame, 
                                QLineEdit, QSizePolicy, QScrollArea, QWidget, 
-                               QPushButton, QStyle, QMessageBox)
+                               QPushButton, QStyle, QCheckBox, QDialogButtonBox)
 from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
@@ -90,7 +90,6 @@ class VisitorDetailsDialog(QDialog):
         self.toggle_button.clicked.connect(self.toggle_inside)
         self.layout.addWidget(self.toggle_button)
 
-        # Delete button
         self.delete_button = QPushButton("Delete Visitor")
         self.delete_button.setMinimumHeight(button_height)
         self.delete_button.clicked.connect(self.delete_visitor)
@@ -108,13 +107,27 @@ class VisitorDetailsDialog(QDialog):
 
     def delete_visitor(self):
         """Delete the visitor after confirmation by calling the API."""
-        reply = QMessageBox.question(self, 'Confirm Deletion',
-                                    "Are you sure you want to delete this visitor?",
-                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Confirm Deletion")
+
+        label = QLabel(f"Are you sure you want to delete {self.visitor_data['name']}?")
+        checkbox = QCheckBox("I confirm I want to delete this visitor")
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        ok_button = buttons.button(QDialogButtonBox.Ok)
+        ok_button.setEnabled(False)
+
+        checkbox.stateChanged.connect(lambda state: ok_button.setEnabled(state == 2))
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+
+        layout = QVBoxLayout()
+        layout.addWidget(label)
+        layout.addWidget(checkbox)
+        layout.addWidget(buttons)
+        dialog.setLayout(layout)
+
+        if dialog.exec() == QDialog.Accepted:
             self.logger.write_to_log(f"Deleting visitor with ID: {self.visitor_data['visitorid']}")
             self.api_client.response_received.disconnect()
             self.api_client.delete_visitor(visitor_id=self.visitor_data['visitorid'])
             self.accept()
-        else:
-            pass
