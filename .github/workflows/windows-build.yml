@@ -32,10 +32,10 @@ jobs:
     - name: Set branch suffix and prerelease flag
       run: |
         if ("$env:GITHUB_REF_NAME" -eq "main") {
-          echo "BRANCH_SUFFIX=_MAIN" >> $env:GITHUB_ENV
+          echo "BRANCH_SUFFIX=_main" >> $env:GITHUB_ENV
           echo "IS_PRERELEASE=false" >> $env:GITHUB_ENV
         } else {
-          echo "BRANCH_SUFFIX=_DEV" >> $env:GITHUB_ENV
+          echo "BRANCH_SUFFIX=_dev" >> $env:GITHUB_ENV
           echo "IS_PRERELEASE=true" >> $env:GITHUB_ENV
         }
 
@@ -53,14 +53,14 @@ jobs:
     - name: Build Installer
       run: |
         mkdir C:\installer_output
-                & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}${{ env.BRANCH_SUFFIX }}" kav1.iss
+                & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}" kav1.iss
 
     - name: Create tag
       run: |
         git config user.name "github-actions"
         git config user.email "actions@github.com"
-        git tag -a "v${{ env.SHORT_SHA }}" -m "Tag for build ${{ env.SHORT_SHA }}"
-        git push origin "v${{ env.SHORT_SHA }}"
+        git tag -a "${{ env.SHORT_SHA }}" -m "${{ env.SHORT_SHA }}"
+        git push origin "${{ env.SHORT_SHA }}"
 
     - name: Create Release
       id: create_release
@@ -68,8 +68,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ env.SHORT_SHA }}
-        release_name: Release v${{ env.SHORT_SHA }}${{ env.BRANCH_SUFFIX }}
+        tag_name: ${{ env.SHORT_SHA }}
+        release_name: ${{ env.BRANCH_SUFFIX }} Build ${{ env.SHORT_SHA }}
         draft: false
         prerelease: ${{ env.IS_PRERELEASE }}
 
@@ -79,6 +79,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: C:/installer_output/kav1_setup_${{ env.SHORT_SHA }}${{ env.BRANCH_SUFFIX }}.exe
-        asset_name: kav1_setup_${{ env.SHORT_SHA }}${{ env.BRANCH_SUFFIX }}.exe
+        asset_path: C:/installer_output/kav1_setup_${{ env.SHORT_SHA }}.exe
+        asset_name: kav1_setup_${{ env.SHORT_SHA }}.exe
         asset_content_type: application/octet-stream
