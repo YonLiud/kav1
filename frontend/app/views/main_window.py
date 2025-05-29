@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
 
         layout.addWidget(self.ws_status_label)
-        layout.addWidget(self.client_version)
+        # layout.addWidget(self.client_version)
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.sync_button)
