@@ -23,7 +23,9 @@ jobs:
 
     - name: Get short SHA
       id: vars
-      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      run: |
+        echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $env:GITHUB_ENV
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
