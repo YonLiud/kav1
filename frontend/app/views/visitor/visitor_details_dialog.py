@@ -127,7 +127,6 @@ class VisitorDetailsDialog(QDialog):
         dialog.setLayout(layout)
 
         if dialog.exec() == QDialog.Accepted:
-            self.logger.write_to_log(f"Deleting visitor with ID: {self.visitor_data['visitorid']}")
             self.api_client.response_received.disconnect()
             self.api_client.delete_visitor(visitor_id=self.visitor_data['visitorid'])
             self.accept()
