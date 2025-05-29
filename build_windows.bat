@@ -13,11 +13,13 @@ echo %GIT_HASH% > backend\version.txt
 set RELEASE_BUILD=true
 
 :: Build frontend
+echo BUILDING FRONTEND
 cd frontend
 pyinstaller --noconfirm main.spec
 cd ..
 
 :: Build backend
+echo BUILDING BACKEND
 cd backend
 pyinstaller --noconfirm server.spec
 cd ..

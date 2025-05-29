@@ -5,14 +5,14 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('app\\**\\*.py', 'app')
+        ('app\\**\\*.py', 'app'),
+        ('version.txt', '.')
     ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
-    datas=[('version.txt', '.')],
     noarchive=False,
     optimize=0,
 )
