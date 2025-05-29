@@ -1,11 +1,12 @@
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFrame, 
-                               QGridLayout, QScrollArea, QWidget, QPushButton, 
-                               QLineEdit, QCheckBox, QHBoxLayout, QMdiSubWindow)
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QDialog, QVBoxLayout, QLabel,
+    QScrollArea, QWidget, QPushButton,
+    QLineEdit, QCheckBox, QHBoxLayout)
 
 from app.core.api_client import ApiClient
 
-from app.views.common.warning_dialog import show_warning 
+from app.views.common.warning_dialog import show_warning
+
 
 class CreateVisitorDialog(QDialog):
     def __init__(self):
@@ -49,7 +50,7 @@ class CreateVisitorDialog(QDialog):
 
         self.param_fields = []
         self.add_param_field()
-        
+
         self.api_client.response_received.disconnect()
         self.api_client.response_received.connect(self.on_visitor_found)
         self.api_client.error_occurred.connect(self.on_error)
@@ -88,7 +89,7 @@ class CreateVisitorDialog(QDialog):
 
         if not name or not visitor_id:
             show_warning(
-                "Missing Information", 
+                "Missing Information",
                 "Both name and visitor ID are required to continue.\n\n"
                 "Please provide:\n"
                 "• Full visitor name\n"
@@ -119,7 +120,6 @@ class CreateVisitorDialog(QDialog):
                 "• Check for typos in the ID\n"
                 "• Search for the existing visitor if needed"
             )
-
 
     def on_error(self, error_message):
         """
@@ -152,7 +152,7 @@ class CreateVisitorDialog(QDialog):
             else:
                 try:
                     val = int(val)
-                except:
+                except Exception:
                     pass
 
             properties[key] = val

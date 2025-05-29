@@ -70,7 +70,7 @@ class VisitorDetailsDialog(QDialog):
             for key, value in properties.items():
                 line_edit = QLineEdit()
                 line_edit.setText(f"{key}: {value}")
-                line_edit.setAlignment(Qt.AlignLeft) 
+                line_edit.setAlignment(Qt.AlignLeft)
                 line_edit.setReadOnly(True)
                 line_edit.setSizePolicy(
                     QSizePolicy.Expanding,

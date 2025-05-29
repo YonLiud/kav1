@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, JSON
 from .database import Base
 
+
 class Visitor(Base):
     __tablename__ = "visitors"
 
@@ -9,4 +10,3 @@ class Visitor(Base):
     visitorid = Column(String, unique=True, index=True, nullable=False)
     inside = Column(Boolean, default=False, nullable=False)
     properties = Column("properties", JSON, nullable=True)
-

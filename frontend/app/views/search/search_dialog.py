@@ -7,6 +7,7 @@ from .search_result_dialog import SearchResultDialog
 from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
 from app.views.common.warning_dialog import show_warning
 
+
 class SearchDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -38,30 +39,33 @@ class SearchDialog(QDialog):
         if query:
             if self.search_by_name.isChecked():
                 self.api_client.response_received.disconnect()
-                self.api_client.response_received.connect(self.handle_search_results)
+                self.api_client.response_received.connect(
+                    self.handle_search_results)
                 self.api_client.search_visitors(query)
             elif self.search_by_id.isChecked():
                 self.api_client.response_received.disconnect()
-                self.api_client.response_received.connect(self.handle_search_by_id_results)
+                self.api_client.response_received.connect(
+                    self.handle_search_by_id_results)
                 self.api_client.get_visitor_by_id(query)
         else:
             self.handle_empty_url()
 
     def handle_search_results(self, results):
         if results and 'visitors' in results:
-            search_result_dialog = SearchResultDialog(self.search_input.text(), results['visitors'])
+            search_result_dialog = SearchResultDialog(
+                self.search_input.text(), results['visitors'])
             self.accept()
             search_result_dialog.exec()
         else:
             self.handle_no_result()
-    
+
     def handle_search_by_id_results(self, results):
         if results and 'visitor' in results:
             visitor_details_dialog = VisitorDetailsDialog(results['visitor'])
             visitor_details_dialog.exec()
         else:
             self.handle_no_result()
-    
+
     def handle_no_result(self):
         show_warning(
             "Search Field Empty",

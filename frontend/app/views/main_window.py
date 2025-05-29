@@ -1,10 +1,10 @@
-from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget, 
-                             QTextEdit, QPushButton, QLabel,
-                             QListWidget, QHBoxLayout, QStyle, 
-                             QMessageBox, QApplication)
-import time
+from PySide6.QtWidgets import (
+    QMainWindow, QVBoxLayout, QWidget,
+    QPushButton, QLabel,
+    QListWidget, QHBoxLayout, QStyle,
+    QApplication,
+)
 from PySide6.QtGui import QFont
-from datetime import datetime
 
 from app.core.api_client import ApiClient
 from app.core.ws_client import WebSocketClient
@@ -19,8 +19,9 @@ from app.views.search.search_dialog import SearchDialog
 from app.views.common.warning_dialog import show_warning
 from app.utils.log import Log
 
+
 class MainWindow(QMainWindow):
-    def __init__(self, appName = "Kav 1"):
+    def __init__(self, appName="Kav 1"):
         super().__init__()
 
         self.ask_for_connection()
@@ -30,7 +31,7 @@ class MainWindow(QMainWindow):
         self.setup_ui(appName)
         self.setup_clients()
         self.connect_signals()
-        
+
         self.force_sync()
 
     def setup_ui(self, appName):
@@ -45,12 +46,15 @@ class MainWindow(QMainWindow):
         self.client_version = QLabel(f"Version Hash: {get_version()}")
 
         self.search_button = QPushButton("Search Visitors")
-        self.search_button.setIcon(self.style().standardIcon(QStyle.SP_FileDialogContentsView))
+        self.search_button.setIcon(self.style().standardIcon(
+            QStyle.SP_FileDialogContentsView))
         self.create_button = QPushButton("Add Visitor")
-        self.create_button.setIcon(self.style().standardIcon(QStyle.SP_CommandLink))
+        self.create_button.setIcon(self.style().standardIcon(
+            QStyle.SP_CommandLink))
         self.sync_button = QPushButton("Force Sync")
-        self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
-        
+        self.sync_button.setIcon(self.style().standardIcon(
+            QStyle.SP_BrowserReload))
+
         button_height = 40
         self.search_button.setFixedHeight(button_height)
         self.sync_button.setFixedHeight(button_height)
@@ -145,7 +149,7 @@ class MainWindow(QMainWindow):
     def update_visitors_list(self, visitors):
         """Update the visitors list with those currently inside."""
         self.visitors_list.clear()
-        if len(visitors)>0: 
+        if len(visitors) > 0:
             for visitor in visitors:
                 display_name = f"{visitor['visitorid']} - {visitor['name']}"
                 self.visitors_list.addItem(display_name)
@@ -166,7 +170,8 @@ class MainWindow(QMainWindow):
     def handle_visitor_details(self, results):
         """Handle the visitor details response."""
         if results and 'visitor' in results:
-            visitor_details_dialog = VisitorDetailsDialog(results['visitor'], self)
+            visitor_details_dialog = VisitorDetailsDialog(results['visitor'],
+                                                          self)
             visitor_details_dialog.exec()
 
     def ask_for_connection(self):
