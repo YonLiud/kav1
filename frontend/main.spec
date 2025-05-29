@@ -10,8 +10,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('app\\**\\*.py', 'app'),
-        ('version.txt', '.')  # Keep if you still need this file
+        ('app\\**\\*.py', 'app') # even deepseek could not help with this issue LOL
     ],
     hiddenimports=[],
     hookspath=[],
