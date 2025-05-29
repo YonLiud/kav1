@@ -11,12 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/download-artifact@v4
+    - name: Download artifact
+      uses: actions/download-artifact@v4
       with:
         name: installer
         path: ./output
+        run-id: ${{ github.event.workflow_run.id }}  # Specify the run-id here
 
-    - run: |
+    - name: Set tag and suffix
+      run: |
         echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
         if [[ "$GITHUB_REF_NAME" == "main" ]]; then
           echo "BRANCH_SUFFIX=_main" >> $GITHUB_ENV
@@ -26,7 +29,8 @@ jobs:
           echo "IS_PRERELEASE=true" >> $GITHUB_ENV
         fi
 
-    - run: |
+    - name: Create tag
+      run: |
         git config user.name "github-actions"
         git config user.email "actions@github.com"
         git tag -a "${{ env.SHORT_SHA }}" -m "${{ env.SHORT_SHA }}"
