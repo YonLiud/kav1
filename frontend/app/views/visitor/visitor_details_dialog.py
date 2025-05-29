@@ -1,32 +1,34 @@
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFrame, 
-                               QLineEdit, QSizePolicy, QScrollArea, QWidget, 
-                               QPushButton, QStyle, QCheckBox, QDialogButtonBox)
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFrame,
+                               QLineEdit, QSizePolicy, QScrollArea, QWidget,
+                               QPushButton, QStyle, QCheckBox,
+                               QDialogButtonBox)
 from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
 from app.utils.log import Log
 
+
 class VisitorDetailsDialog(QDialog):
     def __init__(self, visitor_data, parent=None):
         super().__init__(parent)
-        
+
         self.api_client = ApiClient.get_instance()
         self.logger = Log()
-        
+
         self.visitor_data = visitor_data
 
         self.setWindowTitle("Visitor Details")
         self.setMinimumSize(450, 400)
-        
+
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(16, 16, 16, 16)
         self.layout.setSpacing(12)
-        
+
         self.header_frame = QFrame()
         self.header_frame.setFrameShape(QFrame.StyledPanel)
         header_layout = QVBoxLayout(self.header_frame)
         header_layout.setContentsMargins(12, 12, 12, 12)
-        
+
         self.title_label = QLabel("Visitor Information")
         self.title_label.setAlignment(Qt.AlignCenter)
         title_font = self.title_label.font()
@@ -34,16 +36,18 @@ class VisitorDetailsDialog(QDialog):
         title_font.setPointSize(14)
         self.title_label.setFont(title_font)
         header_layout.addWidget(self.title_label)
-        
+
         self.name_label = QLabel(f"<b>Name:</b> {visitor_data['name']}")
-        self.visitorid_label = QLabel(f"<b>Visitor ID:</b> {visitor_data['visitorid']}")
+        self.visitorid_label = QLabel(
+            f"<b>Visitor ID:</b> {visitor_data['visitorid']}"
+        )
         self.inside_label = QLabel(f"<b>Inside:</b> {visitor_data['inside']}")
 
         header_layout.addWidget(self.name_label)
         header_layout.addWidget(self.visitorid_label)
         header_layout.addWidget(self.inside_label)
         self.layout.addWidget(self.header_frame)
-        
+
         self.properties_frame = QFrame()
         self.properties_frame.setFrameShape(QFrame.StyledPanel)
         properties_layout = QVBoxLayout(self.properties_frame)
@@ -68,7 +72,10 @@ class VisitorDetailsDialog(QDialog):
                 line_edit.setText(f"{key}: {value}")
                 line_edit.setAlignment(Qt.AlignLeft) 
                 line_edit.setReadOnly(True)
-                line_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                line_edit.setSizePolicy(
+                    QSizePolicy.Expanding,
+                    QSizePolicy.Fixed
+                )
                 line_edit.adjustSize()
 
                 scroll_layout.addWidget(line_edit)
@@ -79,14 +86,18 @@ class VisitorDetailsDialog(QDialog):
             self.no_properties_label = QLabel("No properties available.")
             self.no_properties_label.setAlignment(Qt.AlignCenter)
             properties_layout.addWidget(self.no_properties_label)
-                
+
         self.layout.addWidget(self.properties_frame)
 
         isInside = self.visitor_data["inside"]
-        self.toggle_button = QPushButton(f"Mark {'Outside' if isInside else 'Inside'}")
+        self.toggle_button = QPushButton(
+            f"Mark {'Outside' if isInside else 'Inside'}"
+        )
         button_height = 40
         self.toggle_button.setMinimumHeight(button_height)
-        self.toggle_button.setIcon(self.style().standardIcon(QStyle.SP_VistaShield))
+        self.toggle_button.setIcon(self.style().standardIcon(
+            QStyle.SP_VistaShield
+        ))
         self.toggle_button.clicked.connect(self.toggle_inside)
         self.layout.addWidget(self.toggle_button)
 
@@ -110,13 +121,19 @@ class VisitorDetailsDialog(QDialog):
         dialog = QDialog(self)
         dialog.setWindowTitle("Confirm Deletion")
 
-        label = QLabel(f"Are you sure you want to delete {self.visitor_data['name']}?")
+        label = QLabel(
+            f"Are you sure you want to delete {self.visitor_data['name']}?"
+        )
         checkbox = QCheckBox("I confirm I want to delete this visitor")
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        )
         ok_button = buttons.button(QDialogButtonBox.Ok)
         ok_button.setEnabled(False)
 
-        checkbox.stateChanged.connect(lambda state: ok_button.setEnabled(state == 2))
+        checkbox.stateChanged.connect(
+            lambda state: ok_button.setEnabled(state == 2)
+        )
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
 
@@ -128,5 +145,7 @@ class VisitorDetailsDialog(QDialog):
 
         if dialog.exec() == QDialog.Accepted:
             self.api_client.response_received.disconnect()
-            self.api_client.delete_visitor(visitor_id=self.visitor_data['visitorid'])
+            self.api_client.delete_visitor(
+                visitor_id=self.visitor_data['visitorid']
+            )
             self.accept()
