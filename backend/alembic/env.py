@@ -6,7 +6,7 @@ import os
 import sys
 
 # Add app folder to sys.path so imports work
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app import models
 
 # Alembic Config object, access .ini values

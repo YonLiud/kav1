@@ -20,7 +20,9 @@ class VisitorLog(Base):
     __tablename__ = "visitor_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    visitor_dbid = Column(Integer, ForeignKey("visitors.dbid", ondelete="CASCADE"), nullable=False)
+    visitor_dbid = Column(
+        Integer, ForeignKey("visitors.dbid", ondelete="CASCADE"), nullable=False
+    )
     action = Column(String, nullable=False)  # "entry" or "exit"
     timestamp = Column(DateTime, default=datetime.now)
 

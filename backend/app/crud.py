@@ -29,6 +29,7 @@ def update_visitor_status(db: Session, visitor_id: str, is_inside: bool):
         visitor.inside = is_inside
         db.commit()
         db.refresh(visitor)
+        log_visitor_action(db, visitor.dbid, "entry" if is_inside else "exit")
         return visitor
     return None
 
@@ -57,3 +58,13 @@ def search_visitors_by_name(db: Session, search_query: str):
         .filter(models.Visitor.name.ilike(f"%{search_query}%"))
         .all()
     )
+
+
+def log_visitor_action(db: Session, visitor_dbid: int, action: str):
+    log = models.VisitorLog(
+        visitor_dbid=visitor_dbid,
+        action=action,
+    )
+    db.add(log)
+    db.commit()
+    db.refresh(log)
