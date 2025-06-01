@@ -23,7 +23,7 @@ class VisitorLog(Base):
     visitor_dbid = Column(
         Integer, ForeignKey("visitors.dbid", ondelete="CASCADE"), nullable=False
     )
-    action = Column(String, nullable=False)  # "entry" or "exit"
+    action = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.now)
 
     visitor = relationship("Visitor", back_populates="logs")

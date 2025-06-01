@@ -17,6 +17,9 @@ def create_visitor(db: Session, name: str, visitorid: str, properties: dict):
     db.add(db_visitor)
     db.commit()
     db.refresh(db_visitor)
+
+    log_visitor_action(db, db_visitor.dbid, "creation")
+
     return db_visitor
 
 
@@ -68,3 +71,12 @@ def log_visitor_action(db: Session, visitor_dbid: int, action: str):
     db.add(log)
     db.commit()
     db.refresh(log)
+
+
+def get_latest_log_for_visitor(db: Session, visitor_dbid: int):
+    return (
+        db.query(models.VisitorLog)
+        .filter(models.VisitorLog.visitor_dbid == visitor_dbid)
+        .order_by(models.VisitorLog.timestamp.desc())
+        .first()
+    )

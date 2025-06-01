@@ -31,7 +31,23 @@ def get_visitors(db: Session = Depends(database.get_db)):
 
 @router.get("/visitors/inside")
 def get_visitors_inside(db: Session = Depends(database.get_db)):
-    return crud.get_visitors_inside(db)
+    visitors = crud.get_visitors_inside(db)
+    result = []
+    for v in visitors:
+        latest_log = crud.get_latest_log_for_visitor(db, v.dbid)
+        action = None
+        if latest_log:
+            action = {latest_log.action: latest_log.timestamp.isoformat()}
+        visitor_data = {
+            "inside": v.inside,
+            "dbid": v.dbid,
+            "name": v.name,
+            "visitorid": v.visitorid,
+            "properties": v.properties or {},
+            "action": action,
+        }
+        result.append(visitor_data)
+    return result
 
 
 @router.post("/visitor")
@@ -81,7 +97,6 @@ async def change_status(
     if not visitor:
         return {"message": "Visitor not found"}
 
-    # Log the status change
     event_type = "ENTRY" if is_inside else "EXIT"
     visitor_logger.log_event(
         event_type=event_type, visitor_id=visitor.visitorid, visitor_name=visitor.name
