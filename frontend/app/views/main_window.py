@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
     QApplication,
 )
 from PySide6.QtGui import QFont
+from datetime import datetime
 
 from app.core.api_client import ApiClient
 from app.core.ws_client import WebSocketClient
@@ -162,11 +163,20 @@ class MainWindow(QMainWindow):
             self.visitors_list.clear()
 
     def update_visitors_list(self, visitors):
-        """Update the visitors list with those currently inside."""
         self.visitors_list.clear()
         if len(visitors) > 0:
             for visitor in visitors:
-                display_name = f"{visitor['visitorid']} - {visitor['name']}"
+                action = visitor.get("action", {})
+                # Get the first action type and time (e.g. "entry": "timehere")
+                if action:
+                    action_type, action_time = next(iter(action.items()))
+                    dt = datetime.fromisoformat(action_time)
+                    formatted = dt.strftime("%H:%M:%S0 %d\\%m\\%Y")
+                    display_action = f"{action_type} at {formatted}"
+                else:
+                    display_action = "No action"
+
+                display_name = f"{visitor['visitorid']} - {visitor['name']} ({display_action})"
                 self.visitors_list.addItem(display_name)
 
     def on_visitor_clicked(self):
