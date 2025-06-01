@@ -122,6 +122,10 @@ jobs:
       with:
         tag_name: ${{ env.SHORT_SHA }}
         release_name: ${{ env.BRANCH_SUFFIX == 'dev' && format('Preview Build {0} - {1}', env.SHORT_SHA, env.CURRENT_TIME) || format('Release Build {0} - {1}', env.SHORT_SHA, env.CURRENT_TIME) }}
+        body: |
+          Automated build from ${{ env.BRANCH_SUFFIX }} branch.
+          Commit: ${{ env.SHORT_SHA }}
+          Built at: ${{ env.CURRENT_TIME }}
         draft: false
         prerelease: ${{ env.IS_PRERELEASE }}
     
