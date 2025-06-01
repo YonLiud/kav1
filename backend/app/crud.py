@@ -94,8 +94,11 @@ def get_logs(db: Session, limit: int = 20):
         .all()
     )
 
+
 def get_logs_for_visitor(db: Session, visitorid: str):
-    visitor = db.query(models.Visitor).filter(models.Visitor.visitorid == visitorid).first()
+    visitor = (
+        db.query(models.Visitor).filter(models.Visitor.visitorid == visitorid).first()
+    )
     if not visitor:
         return []
 
