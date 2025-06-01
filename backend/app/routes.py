@@ -31,7 +31,23 @@ def get_visitors(db: Session = Depends(database.get_db)):
 
 @router.get("/visitors/inside")
 def get_visitors_inside(db: Session = Depends(database.get_db)):
-    return crud.get_visitors_inside(db)
+    visitors = crud.get_visitors_inside(db)
+    result = []
+    for v in visitors:
+        latest_log = crud.get_latest_log_for_visitor(db, v.dbid)
+        action = None
+        if latest_log:
+            action = {latest_log.action: latest_log.timestamp.isoformat()}
+        visitor_data = {
+            "inside": v.inside,
+            "dbid": v.dbid,
+            "name": v.name,
+            "visitorid": v.visitorid,
+            "properties": v.properties or {},
+            "action": action,
+        }
+        result.append(visitor_data)
+    return result
 
 
 @router.post("/visitor")
@@ -81,7 +97,6 @@ async def change_status(
     if not visitor:
         return {"message": "Visitor not found"}
 
-    # Log the status change
     event_type = "ENTRY" if is_inside else "EXIT"
     visitor_logger.log_event(
         event_type=event_type, visitor_id=visitor.visitorid, visitor_name=visitor.name
@@ -112,3 +127,30 @@ async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)
         print(f"Broadcast failed: {e}")
 
     return {"message": "Visitor deleted successfully", "visitor": visitor}
+
+
+@router.get("/logs")
+def get_logs(limit: int = 20, db: Session = Depends(database.get_db)):
+    logs = crud.get_logs(db, limit)
+    enriched_logs = []
+    for log in logs:
+        visitor = crud.get_visitor_by_dbid(db, log.visitor_dbid)
+        enriched_logs.append(
+            {
+                "id": log.id,
+                "timestamp": log.timestamp.isoformat(),
+                "action": log.action,
+                "visitor_dbid": log.visitor_dbid,
+                "visitor_name": visitor.name if visitor else "Unknown",
+            }
+        )
+    return enriched_logs
+
+
+@router.get("/logs/{visitor_id}")
+def get_logs_for_visitor(visitor_id: str, db: Session = Depends(database.get_db)):
+    logs = crud.get_logs_for_visitor(db, visitor_id)
+    if logs:
+        return logs
+    else:
+        raise HTTPException(status_code=404, detail="No logs found for this visitor")

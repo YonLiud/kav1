@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
     QApplication,
 )
 from PySide6.QtGui import QFont
+from datetime import datetime
 
 from app.core.api_client import ApiClient
 from app.core.ws_client import WebSocketClient
@@ -69,10 +70,12 @@ class MainWindow(QMainWindow):
         self.create_button.setIcon(self.style().standardIcon(QStyle.SP_CommandLink))
         self.sync_button = QPushButton("Force Sync")
         self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
+        self.logs_button = QPushButton("Show Logs")
 
         button_height = 40
-        self.search_button.setFixedHeight(button_height)
+        self.logs_button.setFixedHeight(button_height)
         self.sync_button.setFixedHeight(button_height)
+        self.search_button.setFixedHeight(button_height)
         self.create_button.setFixedHeight(button_height)
 
         font = QFont()
@@ -93,6 +96,7 @@ class MainWindow(QMainWindow):
         # layout.addWidget(self.client_version)
 
         button_layout = QHBoxLayout()
+        button_layout.addWidget(self.logs_button)
         button_layout.addWidget(self.sync_button)
         button_layout.addWidget(self.search_button)
         button_layout.addWidget(self.create_button)
@@ -121,6 +125,7 @@ class MainWindow(QMainWindow):
         self.api_client.response_received.connect(self.handle_api_response)
         self.api_client.error_occurred.connect(self.log_error)
 
+        self.logs_button.clicked.connect(self.open_logs_dialog)
         self.search_button.clicked.connect(self.open_search_dialog)
         self.sync_button.clicked.connect(self.force_sync)
         self.create_button.clicked.connect(self.add_visitor_dialog)
@@ -162,11 +167,22 @@ class MainWindow(QMainWindow):
             self.visitors_list.clear()
 
     def update_visitors_list(self, visitors):
-        """Update the visitors list with those currently inside."""
         self.visitors_list.clear()
         if len(visitors) > 0:
             for visitor in visitors:
-                display_name = f"{visitor['visitorid']} - {visitor['name']}"
+                action = visitor.get("action", {})
+                # Get the first action type and time (e.g. "entry": "timehere")
+                if action:
+                    action_type, action_time = next(iter(action.items()))
+                    dt = datetime.fromisoformat(action_time)
+                    formatted = dt.strftime("%H:%M:%S0 %d\\%m\\%Y")
+                    display_action = f"{action_type} at {formatted}"
+                else:
+                    display_action = "No action"
+
+                display_name = (
+                    f"{visitor['visitorid']} - {visitor['name']} ({display_action})"
+                )
                 self.visitors_list.addItem(display_name)
 
     def on_visitor_clicked(self):
@@ -216,6 +232,17 @@ class MainWindow(QMainWindow):
             f"• {message}",
         )
         QApplication.quit()
+
+    def open_logs_dialog(self):
+        self.api_client.response_received.disconnect()
+        self.api_client.response_received.connect(self.handle_logs_response)
+        self.api_client.get_logs(limit=20)
+
+    def handle_logs_response(self, logs):
+        from app.views.logs.logs_dialog import LogsDialog
+
+        dialog = LogsDialog(logs, self)
+        dialog.exec()
 
 
 if __name__ == "__main__":

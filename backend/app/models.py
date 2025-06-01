@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, JSON
+from sqlalchemy import Column, Integer, String, Boolean, JSON, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+from datetime import datetime
 from .database import Base
 
 
@@ -10,3 +12,18 @@ class Visitor(Base):
     visitorid = Column(String, unique=True, index=True, nullable=False)
     inside = Column(Boolean, default=False, nullable=False)
     properties = Column("properties", JSON, nullable=True)
+
+    logs = relationship("VisitorLog", back_populates="visitor", cascade="all, delete")
+
+
+class VisitorLog(Base):
+    __tablename__ = "visitor_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    visitor_dbid = Column(
+        Integer, ForeignKey("visitors.dbid", ondelete="CASCADE"), nullable=False
+    )
+    action = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now)
+
+    visitor = relationship("Visitor", back_populates="logs")
