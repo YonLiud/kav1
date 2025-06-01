@@ -169,5 +169,5 @@ if __name__ == "__main__":
     }
     }
     dialog = VisitorDetailsDialog(fake_visitor)
-    dialog.exec()
+    dialog.show()
     sys.exit(app.exec())
