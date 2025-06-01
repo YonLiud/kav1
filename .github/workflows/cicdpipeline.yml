@@ -121,7 +121,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.SHORT_SHA }}
-        release_name: release_name: ${{ env.BRANCH_SUFFIX == 'dev' && format('Preview Build {0} - {1}', env.SHORT_SHA, env.CURRENT_TIME) || format('Release Build {0} - {1}', env.SHORT_SHA, env.CURRENT_TIME) }}
+        release_name: ${{ env.BRANCH_SUFFIX == 'dev' && format('Preview Build {0} - {1}', env.SHORT_SHA, env.CURRENT_TIME) || format('Release Build {0} - {1}', env.SHORT_SHA, env.CURRENT_TIME) }}
         draft: false
         prerelease: ${{ env.IS_PRERELEASE }}
     
