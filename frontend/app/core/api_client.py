@@ -93,6 +93,11 @@ class ApiClient(QObject):
             )
             self.manager.post(request, json_data)
 
+    def get_logs(self, limit=20):
+        url = Settings.get_http_url(f"/logs?limit={limit}")
+        ApiClient.logger.write_to_log(f"GET request to {url}")
+        self._send_request(url, "GET")
+
     @Slot(object)
     def _handle_response(self, reply):
         try:

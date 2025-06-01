@@ -70,10 +70,12 @@ class MainWindow(QMainWindow):
         self.create_button.setIcon(self.style().standardIcon(QStyle.SP_CommandLink))
         self.sync_button = QPushButton("Force Sync")
         self.sync_button.setIcon(self.style().standardIcon(QStyle.SP_BrowserReload))
+        self.logs_button = QPushButton("Show Logs")
 
         button_height = 40
-        self.search_button.setFixedHeight(button_height)
+        self.logs_button.setFixedHeight(button_height)
         self.sync_button.setFixedHeight(button_height)
+        self.search_button.setFixedHeight(button_height)
         self.create_button.setFixedHeight(button_height)
 
         font = QFont()
@@ -94,6 +96,7 @@ class MainWindow(QMainWindow):
         # layout.addWidget(self.client_version)
 
         button_layout = QHBoxLayout()
+        button_layout.addWidget(self.logs_button)
         button_layout.addWidget(self.sync_button)
         button_layout.addWidget(self.search_button)
         button_layout.addWidget(self.create_button)
@@ -122,6 +125,7 @@ class MainWindow(QMainWindow):
         self.api_client.response_received.connect(self.handle_api_response)
         self.api_client.error_occurred.connect(self.log_error)
 
+        self.logs_button.clicked.connect(self.open_logs_dialog)
         self.search_button.clicked.connect(self.open_search_dialog)
         self.sync_button.clicked.connect(self.force_sync)
         self.create_button.clicked.connect(self.add_visitor_dialog)
@@ -228,6 +232,17 @@ class MainWindow(QMainWindow):
             f"• {message}",
         )
         QApplication.quit()
+
+    def open_logs_dialog(self):
+        self.api_client.response_received.disconnect()
+        self.api_client.response_received.connect(self.handle_logs_response)
+        self.api_client.get_logs(limit=20)
+
+    def handle_logs_response(self, logs):
+        from app.views.logs.logs_dialog import LogsDialog
+
+        dialog = LogsDialog(logs, self)
+        dialog.exec()
 
 
 if __name__ == "__main__":
