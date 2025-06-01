@@ -94,11 +94,22 @@ def get_logs(db: Session, limit: int = 20):
         .all()
     )
 
+def get_logs_for_visitor(db: Session, visitorid: str):
+    visitor = db.query(models.Visitor).filter(models.Visitor.visitorid == visitorid).first()
+    if not visitor:
+        return []
 
-def get_logs_for_visitor(db: Session, dbid: int):
-    return (
+    logs = (
         db.query(models.VisitorLog)
-        .filter(models.VisitorLog.visitor_dbid == dbid)
+        .filter(models.VisitorLog.visitor_dbid == visitor.dbid)
         .order_by(models.VisitorLog.timestamp.desc())
         .all()
     )
+
+    result = []
+    for log in logs:
+        log_dict = {k: v for k, v in log.__dict__.items() if k != "_sa_instance_state"}
+        log_dict["visitor_name"] = visitor.name
+        result.append(log_dict)
+
+    return result
