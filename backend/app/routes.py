@@ -127,3 +127,17 @@ async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)
         print(f"Broadcast failed: {e}")
 
     return {"message": "Visitor deleted successfully", "visitor": visitor}
+
+
+@router.get("/logs")
+def get_all_logs(db: Session = Depends(database.get_db)):
+    return crud.get_all_logs(db)
+
+
+@router.get("/logs/{visitor_id}")
+def get_logs_for_visitor(visitor_id: str, db: Session = Depends(database.get_db)):
+    logs = crud.get_logs_for_visitor(db, visitor_id)
+    if logs:
+        return logs
+    else:
+        raise HTTPException(status_code=404, detail="No logs found for this visitor")

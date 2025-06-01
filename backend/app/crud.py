@@ -80,3 +80,20 @@ def get_latest_log_for_visitor(db: Session, visitor_dbid: int):
         .order_by(models.VisitorLog.timestamp.desc())
         .first()
     )
+
+
+def get_all_logs(db: Session):
+    return db.query(models.VisitorLog).all()
+
+
+def get_logs_for_visitor(db: Session, visitor_id: str):
+    visitor = (
+        db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
+    )
+    if not visitor:
+        return []
+    return (
+        db.query(models.VisitorLog)
+        .filter(models.VisitorLog.visitor_dbid == visitor.dbid)
+        .all()
+    )
