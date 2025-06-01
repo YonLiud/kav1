@@ -26,6 +26,7 @@ from PySide6.QtCore import Qt
 
 from app.core.api_client import ApiClient
 from app.utils.log import Log
+from app.views.logs.logs_dialog import LogsDialog
 
 
 class VisitorDetailsDialog(QDialog):
@@ -112,6 +113,11 @@ class VisitorDetailsDialog(QDialog):
         self.toggle_button.clicked.connect(self.toggle_inside)
         self.layout.addWidget(self.toggle_button)
 
+        self.logs_button = QPushButton("View Logs")
+        self.logs_button.setMinimumHeight(40)
+        self.logs_button.clicked.connect(self.show_logs)
+        self.layout.addWidget(self.logs_button)
+
         self.delete_button = QPushButton("Delete Visitor")
         self.delete_button.setMinimumHeight(button_height)
         self.delete_button.clicked.connect(self.delete_visitor)
@@ -152,6 +158,22 @@ class VisitorDetailsDialog(QDialog):
             self.api_client.response_received.disconnect()
             self.api_client.delete_visitor(visitor_id=self.visitor_data["visitorid"])
             self.accept()
+
+    # def show_logs(self):
+    #     visitor_id = self.visitor_data["visitorid"]
+    #     logs = self.api_client.get_logs_for_visitor(
+    #         visitor_id
+    #     )
+    #     print(logs)
+
+    def show_logs(self):
+        self.api_client.response_received.connect(self.on_logs_received)
+        self.api_client.get_logs_for_visitor(self.visitor_data["visitorid"])
+
+    def on_logs_received(self, data):
+        print(data)
+        self.api_client.response_received.disconnect(self.on_logs_received)
+        LogsDialog(data).exec()
 
 
 if __name__ == "__main__":
