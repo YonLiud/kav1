@@ -1,3 +1,12 @@
+import sys
+from pathlib import Path
+
+if __name__ == "__main__" and not __package__:
+    file = Path(__file__).resolve()
+    package_root = file.parents[3]
+    sys.path.append(str(package_root))
+    __package__ = "frontend.app.views"
+
 from PySide6.QtWidgets import (
     QDialog,
     QVBoxLayout,
@@ -11,6 +20,7 @@ from PySide6.QtWidgets import (
     QStyle,
     QCheckBox,
     QDialogButtonBox,
+    QApplication,
 )
 from PySide6.QtCore import Qt
 
@@ -142,3 +152,23 @@ class VisitorDetailsDialog(QDialog):
             self.api_client.response_received.disconnect()
             self.api_client.delete_visitor(visitor_id=self.visitor_data["visitorid"])
             self.accept()
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
+    fake_visitor = {
+        "name": "Alice Johnson",
+        "visitorid": "V12345",
+        "inside": True,
+        "properties": {
+            "Company": "OpenAI",
+            "Visit Reason": "Meeting",
+            "Check-in Time": "10:30 AM",
+            "Badge Number": "B-204",
+            "Host": "Dr. Smith",
+        },
+    }
+    dialog = VisitorDetailsDialog(fake_visitor)
+    dialog.show()
+    sys.exit(app.exec())
