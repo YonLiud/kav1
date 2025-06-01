@@ -5,7 +5,7 @@ if __name__ == "__main__" and not __package__:
     file = Path(__file__).resolve()
     package_root = file.parents[3]
     sys.path.append(str(package_root))
-    __package__ = 'frontend.app.views'
+    __package__ = "frontend.app.views"
 
 from PySide6.QtWidgets import (
     QDialog,
@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QFrame,
-    QApplication
+    QApplication,
 )
 from PySide6.QtCore import Qt
 
@@ -114,14 +114,15 @@ class SearchResultDialog(QDialog):
         visitorid = item.text().split(" - ")[0]
         self.search_details(visitorid)
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    
+
     test_results = [
         {"visitorid": "1", "name": "Test Visitor 1"},
-        {"visitorid": "2", "name": "Test Visitor 2"}
+        {"visitorid": "2", "name": "Test Visitor 2"},
     ]
-    
+
     dialog = SearchResultDialog("test", test_results)
     dialog.show()
     sys.exit(app.exec())

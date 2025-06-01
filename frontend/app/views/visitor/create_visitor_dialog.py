@@ -5,7 +5,7 @@ if __name__ == "__main__" and not __package__:
     file = Path(__file__).resolve()
     package_root = file.parents[3]
     sys.path.append(str(package_root))
-    __package__ = 'frontend.app.views'
+    __package__ = "frontend.app.views"
 
 from PySide6.QtWidgets import (
     QDialog,
@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QCheckBox,
     QHBoxLayout,
-    QApplication
+    QApplication,
 )
 
 from app.core.api_client import ApiClient
@@ -178,6 +178,7 @@ class CreateVisitorDialog(QDialog):
 
         self.api_client.create_visitor(data)
         self.accept()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
