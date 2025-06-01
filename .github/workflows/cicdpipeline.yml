@@ -21,8 +21,11 @@ jobs:
       with:
         python-version: '3.11'
     
-    - run: pip install black
-    - run: black --check .
+    - name: Install black
+      run: pip install black
+    
+    - name: Run black
+      run: black --check .
 
   build:
     name: Build Installer
@@ -53,7 +56,7 @@ jobs:
           echo "IS_PRERELEASE=true" >> $env:GITHUB_ENV
         }
     
-    - name: Install Python Requirements
+    - name: Install Python requirements
       run: |
         pip install -r requirements.txt
         pip install pyinstaller
@@ -71,7 +74,7 @@ jobs:
     - name: Install INNO 
       run: choco install innosetup -y
     
-    - name: Run Inno Setup Compiler
+    - name: Run compiler
       run: |
         mkdir C:\installer_output
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}" kav1.iss
