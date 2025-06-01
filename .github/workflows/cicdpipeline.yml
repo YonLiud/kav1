@@ -35,15 +35,16 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
-    - run: |
+    - name: Set Git SHA and Build Flags
+      run: |
         $sha = git rev-parse --short HEAD
         echo "SHORT_SHA=$sha" >> $env:GITHUB_ENV
         echo $sha > frontend/version.txt
         echo $sha > backend/version.txt
         echo "RELEASE_BUILD=true" >> $env:GITHUB_ENV
     
-    - run: |
+    - name: Set Branch-based Flags
+      run: |
         if ("$env:GITHUB_REF_NAME" -eq "main") {
           echo "BRANCH_SUFFIX=_main" >> $env:GITHUB_ENV
           echo "IS_PRERELEASE=false" >> $env:GITHUB_ENV
@@ -52,7 +53,8 @@ jobs:
           echo "IS_PRERELEASE=true" >> $env:GITHUB_ENV
         }
     
-    - run: |
+    - name: Install Python Requirements
+      run: |
         pip install -r requirements.txt
         pip install pyinstaller
         
@@ -66,11 +68,14 @@ jobs:
         pyinstaller --noconfirm server.spec
         cd ..
     
-    - run: choco install innosetup -y
+    - name: Install INNO 
+      run: choco install innosetup -y
     
-    - run: |
+    - name: Run Inno Setup Compiler
+      run: |
         mkdir C:\installer_output
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Qp /O"C:\installer_output" /F"kav1_setup_${{ env.SHORT_SHA }}" kav1.iss
+    
     
     - uses: actions/upload-artifact@v4
       with:
