@@ -132,7 +132,19 @@ async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)
 @router.get("/logs")
 def get_logs(limit: int = 20, db: Session = Depends(database.get_db)):
     logs = crud.get_logs(db, limit)
-    return logs
+    enriched_logs = []
+    for log in logs:
+        visitor = crud.get_visitor_by_dbid(db, log.visitor_dbid)
+        enriched_logs.append(
+            {
+                "id": log.id,
+                "timestamp": log.timestamp.isoformat(),
+                "action": log.action,
+                "visitor_dbid": log.visitor_dbid,
+                "visitor_name": visitor.name if visitor else "Unknown",
+            }
+        )
+    return enriched_logs
 
 
 @router.get("/logs/{visitor_id}")
