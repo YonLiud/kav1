@@ -130,8 +130,9 @@ async def delete_visitor(visitor_id: str, db: Session = Depends(database.get_db)
 
 
 @router.get("/logs")
-def get_all_logs(db: Session = Depends(database.get_db)):
-    return crud.get_all_logs(db)
+def get_logs(limit: int = 20, db: Session = Depends(database.get_db)):
+    logs = crud.get_logs(db, limit)
+    return logs
 
 
 @router.get("/logs/{visitor_id}")
