@@ -176,7 +176,9 @@ class MainWindow(QMainWindow):
                 else:
                     display_action = "No action"
 
-                display_name = f"{visitor['visitorid']} - {visitor['name']} ({display_action})"
+                display_name = (
+                    f"{visitor['visitorid']} - {visitor['name']} ({display_action})"
+                )
                 self.visitors_list.addItem(display_name)
 
     def on_visitor_clicked(self):
