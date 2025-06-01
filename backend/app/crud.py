@@ -55,6 +55,10 @@ def get_visitor_by_id(db: Session, visitor_id: str):
     )
 
 
+def get_visitor_by_dbid(db: Session, visitor_dbid: int):
+    return db.query(models.Visitor).filter(models.Visitor.dbid == visitor_dbid).first()
+
+
 def search_visitors_by_name(db: Session, search_query: str):
     return (
         db.query(models.Visitor)
@@ -83,7 +87,12 @@ def get_latest_log_for_visitor(db: Session, visitor_dbid: int):
 
 
 def get_logs(db: Session, limit: int = 20):
-    return db.query(models.VisitorLog).order_by(models.VisitorLog.timestamp.desc()).limit(limit).all()
+    return (
+        db.query(models.VisitorLog)
+        .order_by(models.VisitorLog.timestamp.desc())
+        .limit(limit)
+        .all()
+    )
 
 
 def get_logs_for_visitor(db: Session, dbid: int):
