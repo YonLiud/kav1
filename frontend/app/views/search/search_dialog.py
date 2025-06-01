@@ -1,3 +1,12 @@
+import sys
+from pathlib import Path
+
+if __name__ == "__main__" and not __package__:
+    file = Path(__file__).resolve()
+    package_root = file.parents[3]
+    sys.path.append(str(package_root))
+    __package__ = 'frontend.app.views'
+
 from PySide6.QtWidgets import (
     QDialog,
     QVBoxLayout,
@@ -5,10 +14,11 @@ from PySide6.QtWidgets import (
     QRadioButton,
     QPushButton,
     QLabel,
+    QApplication
 )
 from app.core.api_client import ApiClient
 
-from .search_result_dialog import SearchResultDialog
+from app.views.search.search_result_dialog import SearchResultDialog
 from app.views.visitor.visitor_details_dialog import VisitorDetailsDialog
 from app.views.common.warning_dialog import show_warning
 
@@ -92,3 +102,9 @@ class SearchDialog(QDialog):
             "• Verify the visitor exists in the system\n"
             "• Refresh the data if recently updated",
         )
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    dialog = SearchDialog()
+    dialog.show()
+    sys.exit(app.exec())
