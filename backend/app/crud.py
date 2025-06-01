@@ -86,14 +86,10 @@ def get_all_logs(db: Session):
     return db.query(models.VisitorLog).all()
 
 
-def get_logs_for_visitor(db: Session, visitor_id: str):
-    visitor = (
-        db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
-    )
-    if not visitor:
-        return []
+def get_logs_for_visitor(db: Session, dbid: int):
     return (
         db.query(models.VisitorLog)
-        .filter(models.VisitorLog.visitor_dbid == visitor.dbid)
+        .filter(models.VisitorLog.visitor_dbid == dbid)
+        .order_by(models.VisitorLog.timestamp.desc())
         .all()
     )
