@@ -5,7 +5,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('app\\**\\*.py', 'app') # even deepseek could not help with this issue LOL
+        ('app\\**\\*.py', 'app')
     ],
     hiddenimports=[],
     hookspath=[],
