@@ -1,4 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    WebSocket,
+    WebSocketDisconnect,
+    Query,
+)
 from sqlalchemy.orm import Session
 from . import crud, schemas, database, websocket
 from .visitor_logger import VisitorLogger
@@ -68,6 +75,19 @@ def add_visitor(visitor: schemas.VisitorCreate, db: Session = Depends(database.g
         return db_visitor
     else:
         raise HTTPException(status_code=400, detail="Failed to create visitor")
+
+
+@router.get("/visitors/search-by-key-value")
+def search_visitors_by_key_value(
+    key: str = Query(..., description="Property key to search for"),
+    value: str = Query(None, description="Optional property value to match"),
+    db: Session = Depends(database.get_db),
+):
+    visitors = crud.search_visitors_by_key_value(db, key, value)
+    if visitors:
+        return {"visitors": visitors}
+    else:
+        return {"message": "Visitor not found"}
 
 
 @router.get("/visitors/search")
@@ -153,4 +173,4 @@ def get_logs_for_visitor(visitor_id: str, db: Session = Depends(database.get_db)
     if logs:
         return logs
     else:
-        raise HTTPException(status_code=404, detail="No logs found for this visitor")
+        return {"message": "Logs not found"}

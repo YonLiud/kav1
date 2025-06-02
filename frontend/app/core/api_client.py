@@ -56,6 +56,15 @@ class ApiClient(QObject):
         )
         self._send_request(url, "GET")
 
+    def search_visitors_by_key_value(self, key: str, value: str = None):
+        url = Settings.get_http_url(f"/visitors/search-by-key-value?key={key}")
+        if value:
+            url += f"&value={value}"
+        ApiClient.logger.write_to_log(
+            f"GET request to {url} with key={key} and value={value}"
+        )
+        self._send_request(url, "GET")
+
     def update_visitor_status(self, visitor_id: str, is_inside: bool):
         url = Settings.get_http_url(
             f"/visitors/{visitor_id}/status?is_inside={is_inside}"
@@ -79,6 +88,16 @@ class ApiClient(QObject):
         )
         self._send_request(url, "POST", {"visitor_id": visitor_id})
 
+    def get_logs(self, limit=50):
+        url = Settings.get_http_url(f"/logs?limit={limit}")
+        ApiClient.logger.write_to_log(f"GET request to {url}")
+        self._send_request(url, "GET")
+
+    def get_logs_for_visitor(self, visitor_dbid: str):
+        url = Settings.get_http_url(f"/logs/{visitor_dbid}")
+        ApiClient.logger.write_to_log(f"GET request to {url} for visitor logs")
+        self._send_request(url, "GET")
+
     def _send_request(self, url: str, method: str, data: dict = None):
         request = QNetworkRequest(QUrl(url))
         request.setHeader(QNetworkRequest.ContentTypeHeader, "application/json")
@@ -92,16 +111,6 @@ class ApiClient(QObject):
                 f"POST request to {url} with data: {json.dumps(data)}"
             )
             self.manager.post(request, json_data)
-
-    def get_logs(self, limit=50):
-        url = Settings.get_http_url(f"/logs?limit={limit}")
-        ApiClient.logger.write_to_log(f"GET request to {url}")
-        self._send_request(url, "GET")
-
-    def get_logs_for_visitor(self, visitor_dbid: str):
-        url = Settings.get_http_url(f"/logs/{visitor_dbid}")
-        ApiClient.logger.write_to_log(f"GET request to {url} for visitor logs")
-        self._send_request(url, "GET")
 
     @Slot(object)
     def _handle_response(self, reply):
