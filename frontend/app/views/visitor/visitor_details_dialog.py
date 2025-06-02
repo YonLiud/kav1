@@ -159,19 +159,12 @@ class VisitorDetailsDialog(QDialog):
             self.api_client.delete_visitor(visitor_id=self.visitor_data["visitorid"])
             self.accept()
 
-    # def show_logs(self):
-    #     visitor_id = self.visitor_data["visitorid"]
-    #     logs = self.api_client.get_logs_for_visitor(
-    #         visitor_id
-    #     )
-    #     print(logs)
-
     def show_logs(self):
+        self.api_client.response_received.disconnect()
         self.api_client.response_received.connect(self.on_logs_received)
         self.api_client.get_logs_for_visitor(self.visitor_data["visitorid"])
 
     def on_logs_received(self, data):
-        print(data)
         self.api_client.response_received.disconnect(self.on_logs_received)
         LogsDialog(data).exec()
 
