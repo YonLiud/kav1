@@ -145,3 +145,6 @@ jobs:
         asset_path: ./output/kav1_setup_${{ env.SHORT_SHA }}.exe
         asset_name: kav1_setup_${{ env.SHORT_SHA }}.exe
         asset_content_type: application/octet-stream
+    
+    - run: 'echo Release hash: "${{ env.SHORT_SHA }}"'
+
