@@ -93,8 +93,8 @@ class ApiClient(QObject):
         ApiClient.logger.write_to_log(f"GET request to {url}")
         self._send_request(url, "GET")
 
-    def get_logs_for_visitor(self, visitor_dbid: str):
-        url = Settings.get_http_url(f"/logs/{visitor_dbid}")
+    def get_logs_for_visitor(self, visitor_id: str):
+        url = Settings.get_http_url(f"/logs/{visitor_id}")
         ApiClient.logger.write_to_log(f"GET request to {url} for visitor logs")
         self._send_request(url, "GET")
 
