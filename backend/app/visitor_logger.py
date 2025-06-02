@@ -40,7 +40,7 @@ class VisitorLogger:
             log_entry += f",{additional_info}"
 
         log_file = self._get_log_file()
-        with open(log_file, "a") as f:
+        with open(log_file, "a", encoding="utf-8") as f:
             f.write(log_entry + "\n")
 
     def get_logs(self, date: Optional[str] = None, max_entries: Optional[int] = None):
