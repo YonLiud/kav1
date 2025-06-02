@@ -60,7 +60,9 @@ class ApiClient(QObject):
         url = Settings.get_http_url(f"/visitors/search-by-key-value?key={key}")
         if value:
             url += f"&value={value}"
-        ApiClient.logger.write_to_log(f"GET request to {url} with key={key} and value={value}")
+        ApiClient.logger.write_to_log(
+            f"GET request to {url} with key={key} and value={value}"
+        )
         self._send_request(url, "GET")
 
     def update_visitor_status(self, visitor_id: str, is_inside: bool):

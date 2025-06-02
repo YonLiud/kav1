@@ -69,7 +69,9 @@ class SearchDialog(QDialog):
         self.search_button = QPushButton("Search")
         self.search_button.clicked.connect(self.search_visitors)
         self.layout.addWidget(self.search_button)
-        self.layout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        self.layout.addSpacerItem(
+            QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        )
 
     def update_search_fields(self):
         if self.search_by_name.isChecked():
@@ -100,7 +102,9 @@ class SearchDialog(QDialog):
             visitor_id = self.search_input.text().strip()
             if visitor_id:
                 self.api_client.response_received.disconnect()
-                self.api_client.response_received.connect(self.handle_search_by_id_results)
+                self.api_client.response_received.connect(
+                    self.handle_search_by_id_results
+                )
                 self.api_client.get_visitor_by_id(visitor_id)
             else:
                 self.handle_empty_url()
