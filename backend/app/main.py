@@ -1,7 +1,6 @@
-from fastapi import FastAPI, Depends, WebSocket, WebSocketDisconnect
-from sqlalchemy.orm import Session
-from . import crud, models, database, websocket
-from .database import SessionLocal, engine
+from fastapi import FastAPI
+from . import models
+from .database import engine
 from .routes import router as visitor_router
 
 app = FastAPI()

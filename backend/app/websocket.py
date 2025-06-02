@@ -1,5 +1,6 @@
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import WebSocket
 from typing import List
+
 
 class WebSocketManager:
     def __init__(self):

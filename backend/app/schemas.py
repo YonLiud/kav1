@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Dict
 
+
 class VisitorCreate(BaseModel):
     name: str
     visitorid: str
@@ -9,9 +10,11 @@ class VisitorCreate(BaseModel):
     class Config:
         orm_mode = True
 
+
 class VisitorBase(VisitorCreate):
     dbid: int
     inside: bool
+
 
 class VisitorUpdate(BaseModel):
     name: Optional[str] = None

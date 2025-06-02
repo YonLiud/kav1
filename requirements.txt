@@ -5,3 +5,4 @@ pydantic
 websockets
 pyside6
 requests
+alembic

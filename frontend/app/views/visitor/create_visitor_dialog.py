@@ -1,11 +1,29 @@
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFrame, 
-                               QGridLayout, QScrollArea, QWidget, QPushButton, 
-                               QLineEdit, QCheckBox, QHBoxLayout, QMdiSubWindow)
-from PySide6.QtCore import Qt
+import sys
+from pathlib import Path
+
+if __name__ == "__main__" and not __package__:
+    file = Path(__file__).resolve()
+    package_root = file.parents[3]
+    sys.path.append(str(package_root))
+    __package__ = "frontend.app.views"
+
+from PySide6.QtWidgets import (
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QScrollArea,
+    QWidget,
+    QPushButton,
+    QLineEdit,
+    QCheckBox,
+    QHBoxLayout,
+    QApplication,
+)
 
 from app.core.api_client import ApiClient
 
-from app.views.common.warning_dialog import show_warning 
+from app.views.common.warning_dialog import show_warning
+
 
 class CreateVisitorDialog(QDialog):
     def __init__(self):
@@ -49,7 +67,7 @@ class CreateVisitorDialog(QDialog):
 
         self.param_fields = []
         self.add_param_field()
-        
+
         self.api_client.response_received.disconnect()
         self.api_client.response_received.connect(self.on_visitor_found)
         self.api_client.error_occurred.connect(self.on_error)
@@ -79,7 +97,7 @@ class CreateVisitorDialog(QDialog):
                 "Double-check:\n"
                 "• All required fields are complete\n"
                 "• The information is accurate\n"
-                "• Any special instructions were followed"
+                "• Any special instructions were followed",
             )
             return
 
@@ -88,12 +106,12 @@ class CreateVisitorDialog(QDialog):
 
         if not name or not visitor_id:
             show_warning(
-                "Missing Information", 
+                "Missing Information",
                 "Both name and visitor ID are required to continue.\n\n"
                 "Please provide:\n"
                 "• Full visitor name\n"
                 "• Valid visitor ID\n"
-                "• Any other required details"
+                "• Any other required details",
             )
             return
 
@@ -109,7 +127,7 @@ class CreateVisitorDialog(QDialog):
         If the visitor is found, show a warning.
         If the visitor is not found, proceed to create the visitor.
         """
-        if data.get('message') == 'Visitor not found':
+        if data.get("message") == "Visitor not found":
             self.create_visitor()
         else:
             show_warning(
@@ -117,9 +135,8 @@ class CreateVisitorDialog(QDialog):
                 "This ID is already in use. Please try a different ID.\n\n"
                 "Tips:\n"
                 "• Check for typos in the ID\n"
-                "• Search for the existing visitor if needed"
+                "• Search for the existing visitor if needed",
             )
-
 
     def on_error(self, error_message):
         """
@@ -129,7 +146,7 @@ class CreateVisitorDialog(QDialog):
             "Operation Failed",
             "An unexpected error occurred:\n\n"
             f"• {error_message}\n\n"
-            "Please try again or contact support if the problem persists."
+            "Please try again or contact support if the problem persists.",
         )
 
     def create_visitor(self):
@@ -152,16 +169,20 @@ class CreateVisitorDialog(QDialog):
             else:
                 try:
                     val = int(val)
-                except:
+                except Exception:
                     pass
 
             properties[key] = val
 
-        data = {
-            "name": name,
-            "visitorid": visitor_id,
-            "properties": properties
-        }
+        data = {"name": name, "visitorid": visitor_id, "properties": properties}
 
         self.api_client.create_visitor(data)
         self.accept()
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
+    dialog = CreateVisitorDialog()
+    dialog.show()
+    sys.exit(app.exec())

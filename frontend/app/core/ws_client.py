@@ -1,6 +1,7 @@
 from PySide6.QtCore import QObject, Signal, QUrl
 from PySide6.QtWebSockets import QWebSocket
 
+
 class WebSocketClient(QObject):
     message_received = Signal(str)
     connected = Signal()
