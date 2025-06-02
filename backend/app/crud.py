@@ -1,3 +1,4 @@
+from sqlalchemy import func, cast, String
 from sqlalchemy.orm import Session
 from . import models
 
@@ -116,3 +117,19 @@ def get_logs_for_visitor(db: Session, visitorid: str):
         result.append(log_dict)
 
     return result
+
+
+def search_visitors_by_key_value(db: Session, key: str, value: str = None):
+    query = db.query(models.Visitor)
+    json_path = f"$.{key}"
+
+    if value is None:
+        query = query.filter(
+            func.json_extract(models.Visitor.properties, json_path) != None
+        )
+    else:
+        query = query.filter(
+            cast(func.json_extract(models.Visitor.properties, json_path), String)
+            == value
+        )
+    return query.all()
