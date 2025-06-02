@@ -110,10 +110,7 @@ class SearchDialog(QDialog):
             if key:
                 self.api_client.response_received.disconnect()
                 self.api_client.response_received.connect(self.handle_search_results)
-                if value:
-                    self.api_client.search_visitors_by_key_value(key, value)
-                else:
-                    self.api_client.search_visitors_by_key(key)
+                self.api_client.search_visitors_by_key_value(key, value)
             else:
                 self.handle_empty_url()
 
