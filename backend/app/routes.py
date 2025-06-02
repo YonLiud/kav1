@@ -87,9 +87,7 @@ def search_visitors_by_key_value(
     if visitors:
         return {"visitors": visitors}
     else:
-        raise HTTPException(
-            status_code=404, detail="No visitors found matching the search"
-        )
+        return {"message": "Visitor not found"}
 
 
 @router.get("/visitors/search")
@@ -175,4 +173,4 @@ def get_logs_for_visitor(visitor_id: str, db: Session = Depends(database.get_db)
     if logs:
         return logs
     else:
-        raise HTTPException(status_code=404, detail="No logs found for this visitor")
+        return {"message": "Logs not found"}
