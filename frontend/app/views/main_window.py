@@ -148,7 +148,11 @@ class MainWindow(QMainWindow):
         self.logger.write_to_log(f"Error: {error}")
 
     def force_sync(self):
-        self.logger.write_to_log("Manual sync initiated...")
+        try:
+            self.api_client.response_received.disconnect()
+        except TypeError:
+            pass
+        self.api_client.response_received.connect(self.handle_get_visitors)
         self.api_client.get_visitors_inside()
 
     def open_search_dialog(self):
@@ -234,7 +238,10 @@ class MainWindow(QMainWindow):
         QApplication.quit()
 
     def open_logs_dialog(self):
-        self.api_client.response_received.disconnect()
+        try:
+            self.api_client.response_received.disconnect()
+        except TypeError:
+            pass
         self.api_client.response_received.connect(self.handle_logs_response)
         self.api_client.get_logs(limit=20)
 
