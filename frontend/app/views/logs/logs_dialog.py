@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QDialog, QVBoxLayout, QListWidget, QLabel
 from datetime import datetime
 from app.views.common.warning_dialog import show_warning
 
+
 class LogsDialog(QDialog):
     def __init__(self, logs, parent=None):
         super().__init__(parent)
@@ -17,7 +18,7 @@ class LogsDialog(QDialog):
                 "✓ Visitor has no recorded logs\n"
                 "✓ Visitor was created before build bf46edd — visitor creation date may be missing\n\n"
                 "Technical details:\n"
-                f"• {message}"
+                f"• {message}",
             )
         else:
             layout = QVBoxLayout()
