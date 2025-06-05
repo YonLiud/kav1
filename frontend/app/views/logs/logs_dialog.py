@@ -15,7 +15,7 @@ class LogsDialog(QDialog):
                 "Could not retrieve logs for this visitor.\n\n"
                 "Possible reasons:\n"
                 "✓ Visitor has no recorded logs\n"
-                "✓ Visitor was created before build bf46edd — log creation date may be missing\n\n"
+                "✓ Visitor was created before build bf46edd — visitor creation date may be missing\n\n"
                 "Technical details:\n"
                 f"• {message}"
             )
