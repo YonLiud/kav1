@@ -180,14 +180,14 @@ def get_logs_for_visitor(visitor_id: str, db: Session = Depends(database.get_db)
 async def update_visitor(
     visitor_id: str,
     visitor: schemas.VisitorUpdate,
-    db: Session = Depends(database.get_db)
+    db: Session = Depends(database.get_db),
 ):
     updated_visitor = crud.update_visitor_details(
         db=db,
         visitor_id=visitor_id,
         name=visitor.name,
         visitorid=visitor.visitorid,
-        properties=visitor.properties
+        properties=visitor.properties,
     )
 
     if not updated_visitor:
@@ -197,7 +197,7 @@ async def update_visitor(
         event_type="UPDATE",
         visitor_id=updated_visitor.visitorid,
         visitor_name=updated_visitor.name,
-        additional_info=f"Updated properties: {updated_visitor.properties}"
+        additional_info=f"Updated properties: {updated_visitor.properties}",
     )
 
     try:

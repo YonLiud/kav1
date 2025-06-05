@@ -135,7 +135,13 @@ def search_visitors_by_key_value(db: Session, key: str, value: str = None):
     return query.all()
 
 
-def update_visitor_details(db: Session, visitor_id: str, name: str = None, visitorid: str = None, properties: dict = None):
+def update_visitor_details(
+    db: Session,
+    visitor_id: str,
+    name: str = None,
+    visitorid: str = None,
+    properties: dict = None,
+):
     visitor = (
         db.query(models.Visitor).filter(models.Visitor.visitorid == visitor_id).first()
     )
