@@ -135,8 +135,17 @@ class ApiClient(QObject):
             ApiClient.logger.write_to_log(f"HTTP Status Code: {status_code}")
 
             if status_code != 200:
-                ApiClient.logger.write_to_log(f"Error occurred: HTTP {status_code}")
-                self.error_occurred.emit(f"HTTP Error: {status_code}")
+                error_message = "Unknown error occurred"
+                try:
+                    decoded_data = raw_data.data().decode("utf-8")
+                    error_data = json.loads(decoded_data)
+                    if "detail" in error_data:
+                        error_message = error_data["detail"]
+                except:
+                    pass
+                
+                ApiClient.logger.write_to_log(f"Error occurred: HTTP {status_code} - {error_message}")
+                self.error_occurred.emit(f"Error: {error_message}")
             else:
                 decoded_data = raw_data.data().decode("utf-8")
                 data = json.loads(decoded_data)

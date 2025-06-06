@@ -32,6 +32,7 @@ class EditVisitorDialog(QDialog):
         super().__init__(parent)
         self.visitor_data = visitor_data
         self.api_client = ApiClient.get_instance()
+        self.api_client.error_occurred.connect(self.on_error)
 
         self.setWindowTitle("Edit Visitor")
         self.setMinimumSize(500, 600)
@@ -215,6 +216,10 @@ class EditVisitorDialog(QDialog):
             self.accept()
             if self.parent():
                 self.parent().accept()
+
+    def on_error(self, error_message):
+        self.api_client.response_received.disconnect(self.on_update_success)
+        show_warning("Error", error_message)
 
 
 if __name__ == "__main__":
