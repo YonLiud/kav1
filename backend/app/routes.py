@@ -7,6 +7,7 @@ from fastapi import (
     Query,
 )
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from . import crud, schemas, database, websocket
 from .visitor_logger import VisitorLogger
 
@@ -182,27 +183,36 @@ async def update_visitor(
     visitor: schemas.VisitorUpdate,
     db: Session = Depends(database.get_db),
 ):
-    updated_visitor = crud.update_visitor_details(
-        db=db,
-        visitor_id=visitor_id,
-        name=visitor.name,
-        visitorid=visitor.visitorid,
-        properties=visitor.properties,
-    )
-
-    if not updated_visitor:
-        raise HTTPException(status_code=404, detail="Visitor not found")
-
-    visitor_logger.log_event(
-        event_type="UPDATE",
-        visitor_id=updated_visitor.visitorid,
-        visitor_name=updated_visitor.name,
-        additional_info=f"Updated properties: {updated_visitor.properties}",
-    )
-
     try:
-        await ws_manager.broadcast("sync")
-    except Exception as e:
-        print(f"Broadcast failed: {e}")
+        updated_visitor = crud.update_visitor_details(
+            db=db,
+            visitor_id=visitor_id,
+            name=visitor.name,
+            visitorid=visitor.visitorid,
+            properties=visitor.properties,
+        )
 
-    return {"visitor": updated_visitor}
+        if not updated_visitor:
+            raise HTTPException(status_code=404, detail="Visitor not found")
+
+        visitor_logger.log_event(
+            event_type="UPDATE",
+            visitor_id=updated_visitor.visitorid,
+            visitor_name=updated_visitor.name,
+            additional_info=f"Updated properties: {updated_visitor.properties}",
+        )
+
+        try:
+            await ws_manager.broadcast("sync")
+        except Exception as e:
+            print(f"Broadcast failed: {e}")
+
+        return {"visitor": updated_visitor}
+    except IntegrityError as e:
+        if "UNIQUE constraint failed: visitors.visitorid" in str(e):
+            raise HTTPException(
+                status_code=400, detail="A visitor with this ID already exists"
+            )
+        raise HTTPException(
+            status_code=500, detail="An error occurred while updating the visitor"
+        )
