@@ -143,8 +143,10 @@ class ApiClient(QObject):
                         error_message = error_data["detail"]
                 except:
                     pass
-                
-                ApiClient.logger.write_to_log(f"Error occurred: HTTP {status_code} - {error_message}")
+
+                ApiClient.logger.write_to_log(
+                    f"Error occurred: HTTP {status_code} - {error_message}"
+                )
                 self.error_occurred.emit(f"Error: {error_message}")
             else:
                 decoded_data = raw_data.data().decode("utf-8")

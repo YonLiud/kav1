@@ -211,10 +211,8 @@ async def update_visitor(
     except IntegrityError as e:
         if "UNIQUE constraint failed: visitors.visitorid" in str(e):
             raise HTTPException(
-                status_code=400,
-                detail="A visitor with this ID already exists"
+                status_code=400, detail="A visitor with this ID already exists"
             )
         raise HTTPException(
-            status_code=500,
-            detail="An error occurred while updating the visitor"
+            status_code=500, detail="An error occurred while updating the visitor"
         )
