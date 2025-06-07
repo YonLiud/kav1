@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
     QStyle,
     QApplication,
 )
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QIcon
 from datetime import datetime
 
 from app.core.api_client import ApiClient
@@ -42,6 +42,9 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.ask_for_connection()
+
+        icon_path = Path(__file__).parent / "Kav1.png"
+        self.setWindowIcon(QIcon(str(icon_path)))
 
         self.logger = Log()
 
