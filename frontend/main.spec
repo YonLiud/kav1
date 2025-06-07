@@ -7,6 +7,7 @@ a = Analysis(
     datas=[
         ('app\\**\\*.py', 'app'),
         ('app/views/Kav1.png', 'app/views'),
+        ('style.css', '.'),
     ],
     hiddenimports=[],
     hookspath=[],
