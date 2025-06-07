@@ -1,0 +1,113 @@
+/* --- Global --- */
+QWidget {
+    background-color: #1e1e1e;  /* dark gray background */
+    color: #ffffff;             /* bright white text */
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+}
+
+/* --- QPushButton --- */
+QPushButton {
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #444444;
+    border-radius: 6px;
+    padding: 8px 14px;
+}
+
+QPushButton:hover {
+    background-color: #3f8efc; /* subtle bright blue hover */
+    border-color: #3f8efc;
+    color: #ffffff;
+}
+
+QPushButton:pressed {
+    background-color: #2a65c4;
+    border-color: #2a65c4;
+}
+
+/* --- QLabel --- */
+QLabel {
+    color: #e0e0e0;  /* slightly softer white */
+}
+
+/* --- QListWidget --- */
+QListWidget {
+    background-color: #252525;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    color: #f0f0f0;
+    selection-background-color: #3f8efc;
+    selection-color: #ffffff;
+}
+
+/* --- QLineEdit --- */
+QLineEdit {
+    background-color: #2c2c2c;
+    border: 1px solid #444444;
+    border-radius: 5px;
+    padding: 6px 10px;
+    color: #ffffff;
+}
+
+QLineEdit:focus {
+    border-color: #3f8efc;
+    background-color: #323232;
+}
+
+/* --- QCheckBox --- */
+QCheckBox {
+    color: #bbbbbb;
+}
+
+QCheckBox::indicator {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid #444444;
+    border-radius: 3px;
+    background: #2c2c2c;
+}
+
+QCheckBox::indicator:checked {
+    background-color: #3f8efc;
+    border-color: #3f8efc;
+}
+
+/* --- QToolButton --- */
+QToolButton {
+    background: transparent;
+    border: none;
+    color: #bbbbbb;
+}
+
+QToolButton:hover {
+    color: #3f8efc;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+}
+
+/* --- Scrollbars --- */
+QScrollBar:vertical {
+    background: #1e1e1e;
+    width: 10px;
+    margin: 15px 0 15px 0;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background: #3f8efc;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none;
+    height: 0;
+}
+
+/* --- Dialog titles, status labels --- */
+QLabel#ws_status_label {
+    color: #888888;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
